@@ -134,6 +134,26 @@ a {
   font-size: 13px;
   border-radius: 7px;
 }
+/* image logo (black on light, orange on dark) */
+.brand-logo {
+  height: 32px;
+  width: 32px;
+  object-fit: contain;
+  display: block;
+}
+.brand-logo-dark {
+  display: none;
+}
+html[data-theme="dark"] .brand-logo-light {
+  display: none;
+}
+html[data-theme="dark"] .brand-logo-dark {
+  display: block;
+}
+.foot-logo {
+  height: 22px;
+  width: 22px;
+}
 .brand-tag {
   font-family: var(--sans);
   font-size: 12px;
@@ -176,6 +196,9 @@ a {
 .nav-cta {
   font-size: 13.5px;
   padding: 8px 15px;
+}
+.cta-short {
+  display: none;
 }
 .theme-toggle {
   display: inline-grid;
@@ -477,6 +500,93 @@ a {
   font-style: normal;
   font-size: 13px;
 }
+/* See / Experience / Eat items as photo cards */
+.todo-items {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.todo-thumb {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  object-fit: cover;
+  display: block;
+  background: var(--bg-soft);
+}
+img.todo-thumb {
+  cursor: zoom-in;
+  transition: transform 0.12s ease;
+}
+img.todo-thumb:hover {
+  transform: scale(1.04);
+}
+.detail-media {
+  cursor: zoom-in;
+}
+
+/* tap-to-enlarge lightbox */
+.img-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(10, 8, 6, 0.9);
+  cursor: zoom-out;
+  animation: appfade 0.18s ease both;
+}
+.img-lightbox[hidden] {
+  display: none;
+}
+.img-lightbox img {
+  max-width: 94vw;
+  max-height: 86vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+}
+.img-lightbox-tap {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+.todo-thumb-ph {
+  background:
+    linear-gradient(135deg, var(--green-soft), var(--bg-soft));
+  border: 1px dashed var(--line-2);
+}
+.todo-item-t {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+/* items without a photo — a clean bulleted text line (no thumbnail box) */
+.todo-item--noimg {
+  position: relative;
+  padding-left: 17px;
+}
+.todo-item--noimg::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+}
 .todo-cat ul {
   list-style: none;
   margin: 7px 0 0;
@@ -568,6 +678,43 @@ a {
 }
 .notes-block .notes {
   margin-top: 10px;
+}
+/* Traveler tips (from Xiaohongshu) */
+.tips-block {
+  margin-top: 18px;
+}
+.tips-block .mini-label small {
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--green-deep);
+  margin-left: 2px;
+}
+.tips-list {
+  list-style: none;
+  margin: 11px 0 0;
+  padding: 14px 15px;
+  background: var(--green-soft);
+  border: 1px solid rgba(196, 125, 42, 0.22);
+  border-radius: var(--r-md);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.tips-list li {
+  position: relative;
+  padding-left: 19px;
+  font-size: 12.8px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.tips-list li::before {
+  content: "✦";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 11px;
+  color: var(--green-deep);
 }
 .search-cn {
   margin-top: 16px;
@@ -979,22 +1126,15 @@ body.show-open .reset-fab {
   padding: 8px 14px;
 }
 
-/* ---------- tabs: Map / Before you go / Support ---------- */
+/* ---------- tabs: Map / Before you go ---------- */
 body[data-tab="map"] #prepare,
-body[data-tab="map"] #support,
 body[data-tab="map"] .foot {
   display: none;
 }
-body[data-tab="prep"] #stage,
-body[data-tab="prep"] #support {
+body[data-tab="prep"] #stage {
   display: none;
 }
-body[data-tab="support"] #stage,
-body[data-tab="support"] #prepare {
-  display: none;
-}
-body[data-tab="prep"] #prepare,
-body[data-tab="support"] #support {
+body[data-tab="prep"] #prepare {
   animation: rise 0.45s ease-out both;
 }
 
@@ -1003,10 +1143,12 @@ body[data-tab="support"] #support {
   top: 16px;
   left: 16px;
   bottom: 16px;
-  width: min(440px, calc(100vw - 32px));
+  width: min(540px, calc(100vw - 32px));
   padding: 0;
   overflow: hidden;
   display: flex;
+  border: 1px solid var(--line-2);
+  box-shadow: var(--shadow-lg);
   animation: rise 0.5s ease-out both;
 }
 .panel-pill {
@@ -1108,6 +1250,7 @@ body[data-tab="support"] #support {
 }
 .wio {
   flex: 1;
+  min-width: 0; /* let the dropdowns shrink to fit, not overflow the panel */
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -1118,6 +1261,8 @@ body[data-tab="support"] #support {
   color: var(--ink-3);
 }
 .wio select {
+  width: 100%;
+  max-width: 100%;
   font-family: var(--sans);
   font-size: 13.5px;
   font-weight: 600;
@@ -1157,9 +1302,7 @@ body[data-tab="support"] #support {
   box-shadow: 0 0 0 3px var(--green-soft);
 }
 #qCity {
-  max-height: 152px;
-  overflow-y: auto;
-  scrollbar-width: thin;
+  /* no inner scroll — the city list flows and scrolls with the whole panel */
   padding: 2px;
 }
 .wizard-go {
@@ -1185,6 +1328,15 @@ body[data-tab="support"] #support {
 }
 .city-tip[hidden] {
   display: none;
+}
+.city-tip-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 9px;
+  display: block;
+  margin-bottom: 10px;
+  background: var(--bg-soft);
 }
 .city-tip strong {
   font-family: var(--display);
@@ -1473,6 +1625,13 @@ body[data-tab="support"] #support {
   border-top: 1px solid var(--line);
   animation: rise 0.35s ease-out both;
 }
+.detail-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+}
 .detail-back {
   font-family: var(--sans);
   font-size: 12.5px;
@@ -1480,11 +1639,143 @@ body[data-tab="support"] #support {
   color: var(--ink-2);
   background: none;
   border: none;
-  padding: 0 0 12px;
+  padding: 0;
   cursor: pointer;
 }
 .detail-back:hover {
   color: var(--ink);
+}
+.detail-report {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cinnabar-deep);
+  background: var(--cinnabar-soft);
+  border: 1px solid rgba(214, 90, 69, 0.25);
+  border-radius: 999px;
+  padding: 5px 11px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.detail-report:hover {
+  background: rgba(214, 90, 69, 0.18);
+}
+
+/* contact / report modal */
+.contact-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(10, 8, 6, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: appfade 0.2s ease both;
+}
+.contact-modal[hidden] {
+  display: none;
+}
+.contact-card {
+  position: relative;
+  width: min(440px, 100%);
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 26px 26px 24px;
+  animation: rise 0.28s ease both;
+}
+.contact-x {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--line-2);
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.contact-x:hover {
+  color: var(--ink);
+  border-color: var(--ink-3);
+}
+.contact-title {
+  font-family: var(--display);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.contact-sub {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 8px 0 0;
+}
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 14px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--ink-2);
+}
+.contact-field small {
+  font-weight: 500;
+  color: var(--ink-3);
+}
+.contact-field input,
+.contact-field select,
+.contact-field textarea {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line-2);
+  background: var(--bg-card);
+  width: 100%;
+}
+.contact-field input[readonly] {
+  color: var(--ink-3);
+  background: var(--bg-soft);
+}
+.contact-field textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+.contact-field input:focus,
+.contact-field select:focus,
+.contact-field textarea:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px var(--green-soft);
+}
+.contact-send {
+  width: 100%;
+  justify-content: center;
+  margin-top: 18px;
+}
+.contact-status {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  margin: 10px 0 0;
+  text-align: center;
+  min-height: 16px;
+}
+.contact-status.ok {
+  color: var(--green-deep);
+  font-weight: 600;
 }
 .panel-scroll {
   flex: 1;
@@ -1719,22 +2010,20 @@ body[data-tab="support"] #support {
 }
 .prep-module {
   display: grid;
-  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  /* small image strip on the left, content fills the rest */
+  grid-template-columns: 132px minmax(0, 1fr);
   background: #fff;
   border: 1px solid var(--line);
   border-radius: var(--r-md);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
-.prep-module:nth-child(even) {
-  grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr);
-}
-.prep-module:nth-child(even) .prep-module-img {
-  order: 2;
+/* image-less modules: full-width text, no empty column */
+.prep-module--noimg {
+  grid-template-columns: 1fr;
 }
 .prep-module-img {
   position: relative;
-  min-height: 250px;
   background: var(--bg-soft);
 }
 .prep-module-img img {
@@ -1742,7 +2031,7 @@ body[data-tab="support"] #support {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* small photo strip — fill the column */
   display: block;
 }
 .prep-module-img::after {
@@ -1751,32 +2040,20 @@ body[data-tab="support"] #support {
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(22, 24, 29, 0.05) 0%,
-    transparent 30%,
-    transparent 60%,
+    transparent 55%,
     rgba(22, 24, 29, 0.55) 100%
   );
-}
-/* Payments banner is a full infographic — show it whole on its own cream bg */
-.prep-module[data-mod="pay"] .prep-module-img {
-  background: #fbf4e2;
-}
-.prep-module[data-mod="pay"] .prep-module-img img {
-  object-fit: contain;
-}
-.prep-module[data-mod="pay"] .prep-module-img::after {
-  display: none;
 }
 .prep-module-credit {
   position: absolute;
   z-index: 1;
-  bottom: 9px;
-  left: 12px;
-  right: 12px;
-  font-size: 10.5px;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  bottom: 7px;
+  left: 8px;
+  right: 8px;
+  font-size: 9px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 .prep-module-body {
   padding: 22px 24px;
@@ -2453,73 +2730,6 @@ body[data-tab="support"] #support {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-.service-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
-  margin-top: 30px;
-}
-.service {
-  position: relative;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: var(--r-md);
-  padding: 22px;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  cursor: pointer;
-  overflow: hidden;
-}
-.service::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--green);
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 0.22s ease;
-}
-.service:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  border-color: #ecd9b0;
-}
-.service:hover::before {
-  transform: scaleY(1);
-}
-.svc-ico {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
-  background: var(--ink);
-  color: #fff;
-  font-size: 16px;
-  margin-bottom: 14px;
-  box-shadow: 0 4px 12px rgba(22, 24, 29, 0.18);
-}
-.service h3 {
-  font-family: var(--display);
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-.service p {
-  font-size: 13.5px;
-  line-height: 1.55;
-  color: var(--ink-2);
-  margin: 7px 0 14px;
-}
-.svc-link {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--green-deep);
-}
 .foot {
   max-width: 1100px;
   margin: clamp(48px, 7vw, 80px) auto 0;
@@ -2556,6 +2766,33 @@ body[data-tab="support"] #support {
   width: 16px;
   height: 16px;
   cursor: pointer;
+}
+/* always-on city-name label — makes guide cities obvious */
+.marker-label {
+  position: absolute;
+  left: 19px;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #1c1812;
+  background: rgba(255, 255, 255, 0.86);
+  padding: 1px 6px;
+  border-radius: 6px;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+  transition: opacity 0.2s ease;
+}
+.marker.dimmed .marker-label {
+  opacity: 0.35;
+}
+.marker.active .marker-label {
+  background: var(--cinnabar);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(178, 63, 44, 0.4);
 }
 .marker-dot {
   position: relative;
@@ -2748,10 +2985,40 @@ body[data-tab="support"] #support {
 
 /* ---------- responsive: stack panels on small screens ---------- */
 @media (max-width: 880px) {
-  .nav-links {
+  /* keep tab navigation on phones; drop the wordmark + tagline to make room */
+  .brand-tag,
+  .brand-name {
     display: none;
   }
-  .brand-tag {
+  .nav {
+    padding: 0 14px;
+    gap: 9px;
+  }
+  .nav-links {
+    display: flex;
+    gap: 13px;
+    margin-left: auto;
+    margin-right: 0;
+    font-size: 13px;
+  }
+  .nav-cta {
+    flex-shrink: 0;
+  }
+  .cta-long {
+    display: none;
+  }
+  .cta-short {
+    display: inline;
+  }
+  /* planner-first on mobile: the wizard/plan sits above the map */
+  .stage {
+    display: flex;
+    flex-direction: column;
+  }
+  .panel {
+    order: -1;
+  }
+  .map-warm {
     display: none;
   }
   .stage {
@@ -2810,6 +3077,7 @@ body[data-tab="support"] #support {
     min-height: 190px;
   }
 }
+
 
 /* ===================================================================
    Warm Dim — dark theme (active only when <html data-theme="dark">)
@@ -3030,24 +3298,6 @@ html[data-theme="dark"] {
 .app-ck.done .app-name {
   color: var(--ink-3);
   text-decoration-color: var(--line-2);
-}
-.service {
-  background: var(--bg-card);
-  border-color: var(--line);
-}
-.service:hover {
-  border-color: rgba(227, 166, 74, 0.4);
-}
-.service::before {
-  background: var(--green);
-}
-.svc-ico {
-  background: linear-gradient(150deg, #f0b35a, var(--green));
-  color: #2a2014;
-  box-shadow: 0 4px 12px rgba(227, 166, 74, 0.28);
-}
-.svc-link {
-  color: var(--green-deep);
 }
 .app-modal-howto li {
   background: #2a2218;

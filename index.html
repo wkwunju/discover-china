@@ -3,11 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Discover China — Travel China like a local</title>
+    <title>Discover China — Experience China like a local</title>
     <meta
       name="description"
-      content="A map-first travel companion that turns Chinese local knowledge into practical English routes, notes, and what to search in Chinese."
+      content="A map-first China trip planner — answer a few questions and get a high-level plan with city guides, what to do, inter-city transport, and a Before-You-Go setup checklist. Curated from real Chinese sources and traveller notes."
     />
+    <link rel="icon" type="image/png" href="./favicon.png" />
+    <link rel="icon" href="./favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,18 +26,21 @@
   <body>
     <!-- slim nav -->
     <header class="nav">
-      <a class="brand" href="#top">
-        <span class="brand-mark">华</span>
+      <a class="brand" href="#map" data-tab="map">
+        <img class="brand-logo brand-logo-light" src="./logo/black%20logo.png" alt="Discover China" />
+        <img class="brand-logo brand-logo-dark" src="./logo/orange%20logo.png" alt="" />
         <span class="brand-name">Discover China</span>
-        <span class="brand-tag">local-intelligence map</span>
+        <span class="brand-tag">Experience China like a local</span>
       </a>
       <nav class="nav-links">
-        <a href="#stage" data-tab="map" class="active">Map</a>
-        <a href="#prepare" data-tab="prep">Before you go</a>
-        <a href="#support" data-tab="support">Support</a>
+        <a href="#map" data-tab="map" class="active">Map</a>
+        <a href="#before" data-tab="prep">Before you go</a>
       </nav>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light/dark">☾</button>
-      <a class="btn btn-dark nav-cta" href="#support" data-tab="support">Support the map</a>
+      <button class="btn btn-dark nav-cta" id="navContact" type="button">
+        <span class="cta-long">Contact / Report</span>
+        <span class="cta-short">Contact</span>
+      </button>
     </header>
 
     <main id="top">
@@ -54,8 +60,9 @@
             <div class="wizard" id="wizard">
               <h1 class="wizard-title">Plan your <span class="grad">China trip</span>.</h1>
               <p class="wizard-sub">
-                Answer a few quick questions — we'll build a high-level plan with
-                city intros, what to do, and how to travel between them.
+                Answer a few quick questions and we'll build a high-level plan —
+                city intros, what to do, and how to get around. Curated from real
+                Chinese sources and thousands of traveller notes.
               </p>
 
               <div class="wq">
@@ -129,7 +136,10 @@
 
             <!-- CITY DETAIL (opens when a city is tapped) -->
             <div class="detail-wrap" id="detailWrap" hidden>
-              <button class="detail-back" id="detailBack" type="button">‹ Back to plan</button>
+              <div class="detail-top">
+                <button class="detail-back" id="detailBack" type="button">‹ Back to plan</button>
+                <button class="detail-report" id="detailReport" type="button">⚑ Report / feedback</button>
+              </div>
               <div class="detail-scroll" id="detail">
             <div class="detail-media">
               <img id="placePhoto" alt="" />
@@ -152,6 +162,11 @@
             <div class="facts-block">
               <span class="mini-label">Good to know</span>
               <dl class="factlist" id="placeFacts"></dl>
+            </div>
+
+            <div class="tips-block" id="tipsBlock" hidden>
+              <span class="mini-label">Traveller tips <small>from Xiaohongshu</small></span>
+              <ul class="tips-list" id="placeTips"></ul>
             </div>
 
             <div class="notes-block">
@@ -193,9 +208,9 @@
             <p class="eyebrow">Before you go</p>
             <h2>Sort these before you board.</h2>
             <p class="block-sub">
-              Three things quietly ruin China trips — paying, getting around,
-              and staying online. Set them up at home, not on arrival.
-              Distilled from real traveller reports, 2025–26.
+              Four things quietly trip up China visitors — paying, the language
+              gap, staying online, and getting around. Set them up at home, not
+              on arrival. Distilled from real traveller reports, 2025–26.
             </p>
           </div>
         </div>
@@ -215,48 +230,11 @@
         </div>
       </section>
 
-      <section class="block" id="support">
-        <div class="block-head">
-          <div>
-            <p class="eyebrow">Support &amp; services</p>
-            <h2>The map stays free. Help is human, only when needed.</h2>
-            <p class="block-sub">
-              Paid services exist for travellers, schools, hotels, or groups who
-              want local judgment — never a paywall on the basics.
-            </p>
-          </div>
-        </div>
-        <div class="service-grid">
-          <article class="service">
-            <span class="svc-ico">♡</span>
-            <h3>Donate</h3>
-            <p>Fund translation and verification of useful China travel notes.</p>
-            <span class="svc-link">Support →</span>
-          </article>
-          <article class="service">
-            <span class="svc-ico">✓</span>
-            <h3>Route review</h3>
-            <p>We check timing, transport, peak-season risk, and alternatives.</p>
-            <span class="svc-link">Get a review →</span>
-          </article>
-          <article class="service">
-            <span class="svc-ico">⚇</span>
-            <h3>Local help</h3>
-            <p>Connect with vetted guides, drivers, city walks, and food tours.</p>
-            <span class="svc-link">Find someone →</span>
-          </article>
-          <article class="service">
-            <span class="svc-ico">▦</span>
-            <h3>Maps for groups</h3>
-            <p>Custom visitor maps for schools, hotels, hostels, and events.</p>
-            <span class="svc-link">Talk B2B →</span>
-          </article>
-        </div>
-      </section>
-
       <footer class="foot">
         <div class="foot-brand">
-          <span class="brand-mark sm">华</span> Discover China
+          <img class="brand-logo brand-logo-light foot-logo" src="./logo/black%20logo.png" alt="" />
+          <img class="brand-logo brand-logo-dark foot-logo" src="./logo/orange%20logo.png" alt="" />
+          Discover China
         </div>
         <p>
           A public-interest travel project. Map data © OpenStreetMap
@@ -298,6 +276,47 @@
         <span class="show-big-cn" id="showBigCn"></span>
         <span class="show-big-tap">Tap anywhere to close</span>
       </div>
+    </div>
+
+    <!-- contact / report modal -->
+    <div class="contact-modal" id="contactModal" hidden>
+      <div class="contact-card" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
+        <button class="contact-x" type="button" aria-label="Close">×</button>
+        <h3 class="contact-title" id="contactTitle">Contact &amp; feedback</h3>
+        <p class="contact-sub" id="contactSub">
+          Spotted a mistake, or have a local tip to add? Tell us — it reaches the team directly.
+        </p>
+        <form id="contactForm">
+          <label class="contact-field">
+            <span>About</span>
+            <input type="text" id="contactAbout" name="about" placeholder="General — or a city / page" />
+          </label>
+          <label class="contact-field">
+            <span>Type</span>
+            <select name="type">
+              <option>Feedback / a tip to add</option>
+              <option>Report a mistake</option>
+              <option>Partnership / other</option>
+            </select>
+          </label>
+          <label class="contact-field">
+            <span>Your email <small>(optional, so we can reply)</small></span>
+            <input type="email" name="email" placeholder="you@example.com" />
+          </label>
+          <label class="contact-field">
+            <span>Message</span>
+            <textarea name="message" rows="5" required placeholder="What's on your mind?"></textarea>
+          </label>
+          <button class="btn btn-dark contact-send" type="submit">Send</button>
+          <p class="contact-status" id="contactStatus"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- tap-to-enlarge image lightbox -->
+    <div class="img-lightbox" id="imgLightbox" hidden>
+      <img id="imgLightboxImg" alt="" />
+      <span class="img-lightbox-tap">Tap anywhere to close</span>
     </div>
 
     <div class="toast" id="toast"></div>

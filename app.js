@@ -21,6 +21,8 @@ const els = {
   pair: $("placePair"),
   todo: $("placeTodo"),
   facts: $("placeFacts"),
+  tips: $("placeTips"),
+  tipsBlock: $("tipsBlock"),
   show: $("placeShow"),
   prepGrid: $("prepGrid"),
   toast: $("toast"),
@@ -35,6 +37,7 @@ const els = {
 };
 
 let activeId = "beijing";
+let hoverId = null;
 let plannedIds = new Set();
 let answers = { days: "7", focus: "firstTrip", cities: [], entry: "shanghai", exit: "beijing" };
 
@@ -51,6 +54,19 @@ const GATEWAY = {
   guilin: 4,
   xinjiang: 3,
   zhangjiajie: 2,
+  chongqing: 8,
+  suzhou: 4,
+  quanzhou: 4,
+  dunhuang: 3,
+  nanjing: 6,
+  dali: 4,
+  tibet: 4,
+  banna: 4,
+  guizhou: 4,
+  enshi: 3,
+  daocheng: 2,
+  lishui: 2,
+  wuzhen: 2,
 };
 let currentRoute = [];
 let map = null;
@@ -95,7 +111,15 @@ function renderDetail() {
   els.pair.textContent = d.pair;
   renderTodo(d);
   renderFacts(d);
+  renderTips(d);
   renderShow(d);
+}
+
+/* "Traveller tips" — practical notes pulled from Xiaohongshu (optional per city) */
+function renderTips(d) {
+  const tips = d.tips || [];
+  els.tipsBlock.hidden = tips.length === 0;
+  els.tips.innerHTML = tips.map((t) => `<li>${t}</li>`).join("");
 }
 
 /* "Show a local" — English → Chinese phrase pairs you can show to someone.
@@ -131,6 +155,21 @@ function renderShow(d) {
     b.addEventListener("click", () => openShowBig(b.dataset.en, b.dataset.cn)),
   );
 }
+/* tap-to-enlarge image lightbox */
+function openImg(src) {
+  if (!src) return;
+  $("imgLightboxImg").src = src;
+  $("imgLightbox").hidden = false;
+  document.body.classList.add("show-open");
+}
+function closeImg() {
+  const o = $("imgLightbox");
+  if (o && !o.hidden) {
+    o.hidden = true;
+    document.body.classList.remove("show-open");
+  }
+}
+
 function openShowBig(en, cn) {
   $("showBigEn").textContent = en;
   $("showBigCn").textContent = cn;
@@ -149,22 +188,40 @@ const TODO_CATS = [
   { key: "experience", label: "Experience", ico: "🚶" },
   { key: "eat", label: "Eat", ico: "🍜" },
 ];
+/* a single See/Experience/Eat item — accepts a plain string or { t, img } */
+function todoItemHTML(x) {
+  const text = typeof x === "string" ? x : x.t || "";
+  // inline { t, img } wins; otherwise look the photo up by text in TODO_IMG
+  const img =
+    (typeof x === "object" && x.img) ||
+    (typeof TODO_IMG !== "undefined" && TODO_IMG[text]) ||
+    "";
+  if (!img) {
+    // no photo for this item → clean text line, no placeholder
+    return `<div class="todo-item todo-item--noimg"><span class="todo-item-t">${text}</span></div>`;
+  }
+  return `<div class="todo-item">
+    <img class="todo-thumb" src="${img}" alt="" loading="lazy" onerror="this.closest('.todo-item').classList.add('todo-item--noimg'); this.remove()" />
+    <span class="todo-item-t">${text}</span>
+  </div>`;
+}
 function renderTodo(d) {
+  els.todo.className = "todo-cats";
   if (d.todo) {
-    els.todo.className = "todo-cats";
     els.todo.innerHTML = TODO_CATS.filter((c) => (d.todo[c.key] || []).length)
       .map(
         (c) => `<div class="todo-cat">
           <span class="todo-h"><i>${c.ico}</i> ${c.label}</span>
-          <ul>${d.todo[c.key].map((x) => `<li>${x}</li>`).join("")}</ul>
+          <div class="todo-items">${d.todo[c.key].map(todoItemHTML).join("")}</div>
         </div>`,
       )
       .join("");
   } else {
-    els.todo.className = "do-list";
-    els.todo.innerHTML = `<ul>${(d.experiences || [])
-      .map((e) => `<li>${e}</li>`)
-      .join("")}</ul>`;
+    els.todo.innerHTML = `<div class="todo-cat"><div class="todo-items">${(
+      d.experiences || []
+    )
+      .map(todoItemHTML)
+      .join("")}</div></div>`;
   }
 }
 
@@ -193,7 +250,7 @@ function refreshMarkers() {
     const el = m.getElement();
     // before a plan exists, nothing is dimmed; after, non-route cities dim
     el.classList.toggle("dimmed", plannedIds.size > 0 && !plannedIds.has(id));
-    el.classList.toggle("active", id === activeId);
+    el.classList.toggle("active", id === (hoverId || activeId));
   });
 }
 
@@ -479,7 +536,7 @@ function showCity(id, fly = false) {
     const d = byId(id);
     map.flyTo({
       center: [d.lng, d.lat],
-      zoom: 5.2,
+      zoom: 6.6,
       speed: 0.9,
       padding: mapPadding(),
       essential: true,
@@ -671,7 +728,7 @@ function renderPrep() {
           ${m.imgCredit ? `<span class="prep-module-credit">${m.imgCredit}</span>` : ""}
         </div>`
       : "";
-    return `<article class="prep-module" data-mod="${m.id}">
+    return `<article class="prep-module${img ? "" : " prep-module--noimg"}" data-mod="${m.id}">
       ${img}
       <div class="prep-module-body">
         <div class="prep-card-head">
@@ -854,7 +911,11 @@ function wirePrep() {
   function place(btn) {
     const d = byId(btn.dataset.v);
     if (!d) return;
-    tip.innerHTML = `<strong>${d.name} <i>${d.cn}</i></strong><span class="city-tip-best">${d.bestFor}</span><p>${d.summary}</p>`;
+    // highlight this city's marker on the map and ease it into view
+    hoverId = d.id;
+    refreshMarkers();
+    if (map) map.easeTo({ center: [d.lng, d.lat], duration: 600, padding: mapPadding() });
+    tip.innerHTML = `${d.photo ? `<img class="city-tip-img" src="${d.photo}" alt="" />` : ""}<strong>${d.name} <i>${d.cn}</i></strong><span class="city-tip-best">${d.bestFor}</span><p>${d.summary}</p>`;
     tip.hidden = false;
     const r = btn.getBoundingClientRect();
     const panel = $("panel").getBoundingClientRect();
@@ -870,7 +931,11 @@ function wirePrep() {
     if (btn) place(btn);
   });
   wrap.addEventListener("mouseout", (e) => {
-    if (!wrap.contains(e.relatedTarget)) tip.hidden = true;
+    if (!wrap.contains(e.relatedTarget)) {
+      tip.hidden = true;
+      hoverId = null;
+      refreshMarkers();
+    }
   });
 })();
 
@@ -922,7 +987,7 @@ $("detailBack").addEventListener("click", () => {
 function mapPadding() {
   const wide = window.innerWidth > 880;
   return wide
-    ? { top: 40, bottom: 50, left: 470, right: 40 }
+    ? { top: 40, bottom: 50, left: 575, right: 40 }
     : { top: 20, bottom: 20, left: 20, right: 20 };
 }
 
@@ -941,12 +1006,12 @@ function initMap() {
   DESTINATIONS.forEach((d) => {
     const el = document.createElement("div");
     el.className = "marker";
+    // dot + an always-on label so it's clear which points have a city guide
+    const label = document.createElement("span");
+    label.className = "marker-label";
+    label.textContent = d.name;
     el.innerHTML = '<span class="marker-dot"></span>';
-    const popup = new maplibregl.Popup({
-      offset: 16,
-      closeButton: false,
-      closeOnClick: false,
-    }).setText(d.name);
+    el.appendChild(label);
     const marker = new maplibregl.Marker({ element: el })
       .setLngLat([d.lng, d.lat])
       .addTo(map);
@@ -954,8 +1019,6 @@ function initMap() {
       e.stopPropagation();
       selectDestination(d.id, true);
     });
-    el.addEventListener("mouseenter", () => popup.setLngLat([d.lng, d.lat]).addTo(map));
-    el.addEventListener("mouseleave", () => popup.remove());
     markers.set(d.id, marker);
   });
 
@@ -1009,9 +1072,13 @@ function setTheme(t) {
   if (map) map.setStyle(MAP_STYLES[t]);
 }
 
-/* ---------- tabs: Map vs. Before you go ---------- */
-function setTab(tab) {
-  const view = ["map", "prep", "support"].includes(tab) ? tab : "map";
+/* ---------- tabs with hash routing (refresh keeps you on the same page) ---------- */
+const TAB_HASH = { map: "map", prep: "before" };
+const HASH_TAB = { map: "map", before: "prep" };
+
+// apply a tab to the DOM (no history change)
+function applyTab(tab) {
+  const view = ["map", "prep"].includes(tab) ? tab : "map";
   document.body.dataset.tab = view;
   document.querySelectorAll(".nav-links a[data-tab]").forEach((a) =>
     a.classList.toggle("active", a.dataset.tab === view),
@@ -1019,6 +1086,19 @@ function setTab(tab) {
   if (view === "map" && map) setTimeout(() => map.resize(), 80);
   window.scrollTo({ top: 0 });
 }
+
+// navigate to a tab → updates the URL hash, which drives applyTab via hashchange
+function setTab(tab) {
+  const target = "#" + (TAB_HASH[tab] || "map");
+  if (location.hash === target) applyTab(tab);
+  else location.hash = target;
+}
+
+function tabFromHash() {
+  return HASH_TAB[location.hash.replace(/^#/, "")] || "map";
+}
+
+window.addEventListener("hashchange", () => applyTab(tabFromHash()));
 
 document.querySelectorAll("[data-tab]").forEach((a) => {
   a.addEventListener("click", (e) => {
@@ -1047,7 +1127,7 @@ document.documentElement.dataset.theme = savedTheme;
   }
 }
 
-document.body.dataset.tab = "map";
+applyTab(tabFromHash()); // restore the tab from the URL on load/refresh
 renderDetail();
 renderPrep();
 // the map opens on the wizard (intake state); no plan rendered until generated
@@ -1064,9 +1144,109 @@ renderPrep();
   }
   const so = $("showOverlay");
   if (so) so.addEventListener("click", closeShowBig);
+  const il = $("imgLightbox");
+  if (il) il.addEventListener("click", closeImg);
+  // click a city photo or any See/Experience/Eat thumbnail to enlarge it
+  const dw = $("detailWrap");
+  if (dw)
+    dw.addEventListener("click", (e) => {
+      const thumb = e.target.closest("img.todo-thumb");
+      if (thumb && thumb.src) return openImg(thumb.src);
+      // clicking anywhere on the hero media opens the city photo
+      if (e.target.closest(".detail-media")) {
+        const p = $("placePhoto");
+        if (p && p.src) openImg(p.src);
+      }
+    });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeShowBig();
+    if (e.key === "Escape") {
+      closeShowBig();
+      closeContact();
+      closeImg();
+    }
   });
+}
+
+/* ---------- contact / report ----------
+   Submissions POST to /api/contact, a Vercel serverless function that sends the
+   message via Resend (same setup as the moreach project) to CONTACT_EMAIL.
+   Set RESEND_API_KEY in the Vercel project env. If the endpoint isn't available
+   (e.g. opened as a local file), it falls back to opening the visitor's mail app. */
+const CONTACT_EMAIL = "wkwunju@gmail.com";
+
+function openContact(about) {
+  const a = $("contactAbout");
+  if (a) a.value = about || "General";
+  const st = $("contactStatus");
+  if (st) {
+    st.textContent = "";
+    st.className = "contact-status";
+  }
+  $("contactModal").hidden = false;
+  document.body.style.overflow = "hidden";
+}
+function closeContact() {
+  const m = $("contactModal");
+  if (m && !m.hidden) {
+    m.hidden = true;
+    document.body.style.overflow = "";
+  }
+}
+function mailtoUrl(subject, body) {
+  return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+    subject,
+  )}&body=${encodeURIComponent(body)}`;
+}
+function submitContact(e) {
+  e.preventDefault();
+  const f = e.target;
+  const data = {
+    about: f.about.value,
+    type: f.type.value,
+    email: f.email.value.trim(),
+    message: f.message.value.trim(),
+  };
+  if (!data.message) return;
+  const status = $("contactStatus");
+  const subject = `[Discover China] ${data.type} — ${data.about}`;
+  const body = `Type: ${data.type}\nAbout: ${data.about}\nFrom: ${data.email || "(not given)"}\n\n${data.message}`;
+  status.textContent = "Sending…";
+  status.className = "contact-status";
+  fetch("/api/contact", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  })
+    .then((r) => r.json().then((j) => ({ ok: r.ok, j })))
+    .then(({ ok, j }) => {
+      if (!ok || !j.success) throw new Error();
+      status.textContent = "Thanks — your message was sent.";
+      status.className = "contact-status ok";
+      f.reset();
+      setTimeout(closeContact, 1500);
+    })
+    .catch(() => {
+      // endpoint unavailable (local file) or send failed → open the mail app
+      status.textContent = "Opening your email app…";
+      window.location.href = mailtoUrl(subject, body);
+    });
+}
+{
+  const m = $("contactModal");
+  if (m)
+    m.addEventListener("click", (e) => {
+      if (e.target === m || e.target.closest(".contact-x")) closeContact();
+    });
+  const nav = $("navContact");
+  if (nav) nav.addEventListener("click", () => openContact("General"));
+  const dr = $("detailReport");
+  if (dr)
+    dr.addEventListener("click", () => {
+      const d = byId(activeId);
+      openContact(d ? `${d.name} (${d.cn}) — city guide` : "City guide");
+    });
+  const form = $("contactForm");
+  if (form) form.addEventListener("submit", submitContact);
 }
 if (window.maplibregl) {
   initMap();

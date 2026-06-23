@@ -40,6 +40,19 @@ This is a static site, so deployment is zero-config:
    the root, with `index.html` at `/`.
 4. Deploy. Every push to the default branch redeploys automatically.
 
+### Contact / report form
+
+`api/contact.js` is a Vercel serverless function that emails contact-form
+submissions to the inbox via [Resend](https://resend.com) (same setup as the
+moreach project). To enable it, add one environment variable in the Vercel
+project settings:
+
+- `RESEND_API_KEY` — your Resend API key (the same one moreach uses).
+
+It sends from the already-verified `hello@moreach.ai` to `wkwunju@gmail.com`,
+with reply-to set to the visitor. If the key is missing or the site is opened
+as a local file, the form falls back to opening the visitor's email app.
+
 ## Note
 
 Map data © OpenStreetMap contributors, basemap © CARTO. City photos via Wikimedia

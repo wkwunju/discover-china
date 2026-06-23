@@ -12,3 +12,12 @@ _preview.html
 # internal note (not for the public repo)
 NOTE.md
 .vercel
+
+# unused AI-generated fallbacks + codex working files
+img/cities/_generated/
+img/cities/_meta/
+
+# dev tooling + unused source assets (not part of the deployed site)
+tools/
+img/*demo*.png
+logo/ChatGPT*
