@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# local preview / scratch files used during development
+_pv*.html
+_inj*.js
+_preview.html
+
+# logs
+*.log
+
+# internal note (not for the public repo)
+NOTE.md

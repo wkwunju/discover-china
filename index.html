@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Discover China — Travel China like a local</title>
+    <meta
+      name="description"
+      content="A map-first travel companion that turns Chinese local knowledge into practical English routes, notes, and what to search in Chinese."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=Inter+Tight:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <!-- slim nav -->
+    <header class="nav">
+      <a class="brand" href="#top">
+        <span class="brand-mark">华</span>
+        <span class="brand-name">Discover China</span>
+        <span class="brand-tag">local-intelligence map</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#stage" data-tab="map" class="active">Map</a>
+        <a href="#prepare" data-tab="prep">Before you go</a>
+        <a href="#support" data-tab="support">Support</a>
+      </nav>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light/dark">☾</button>
+      <a class="btn btn-dark nav-cta" href="#support" data-tab="support">Support the map</a>
+    </header>
+
+    <main id="top">
+      <!-- FULL-BLEED MAP STAGE -->
+      <section class="stage" id="stage">
+        <div id="map" class="map"></div>
+        <div class="map-warm"></div>
+
+        <!-- one consolidated panel: filters + place detail + route -->
+        <aside class="overlay panel glass" id="panel" aria-live="polite">
+          <div class="panel-scroll">
+            <span class="pill-badge panel-pill">
+              <span class="dot-live"></span> Built from real Chinese sources
+            </span>
+
+            <!-- INTAKE: 3-question wizard -->
+            <div class="wizard" id="wizard">
+              <h1 class="wizard-title">Plan your <span class="grad">China trip</span>.</h1>
+              <p class="wizard-sub">
+                Answer a few quick questions — we'll build a high-level plan with
+                city intros, what to do, and how to travel between them.
+              </p>
+
+              <div class="wq">
+                <span class="wq-label"><i>1</i> How many days in China?</span>
+                <div class="wq-opts" id="qDays" data-q="days">
+                  <button class="wopt" data-v="3" type="button">3</button>
+                  <button class="wopt" data-v="5" type="button">5</button>
+                  <button class="wopt active" data-v="7" type="button">7</button>
+                  <button class="wopt" data-v="10" type="button">10</button>
+                  <button class="wopt" data-v="14" type="button">14</button>
+                </div>
+                <input class="wdays-custom" id="qDaysCustom" type="number"
+                  min="1" max="60" inputmode="numeric"
+                  placeholder="or type any number — e.g. 21 days" />
+              </div>
+
+              <div class="wq">
+                <span class="wq-label"><i>2</i> What's the focus of your trip?</span>
+                <div class="wq-opts wq-grid" id="qFocus" data-q="focus">
+                  <button class="wopt active" data-v="firstTrip" type="button">🧭 Discovery</button>
+                  <button class="wopt" data-v="food" type="button">🍜 Food</button>
+                  <button class="wopt" data-v="nature" type="button">⛰ Nature</button>
+                  <button class="wopt" data-v="slow" type="button">🍵 Slow travel</button>
+                </div>
+              </div>
+
+              <div class="wq">
+                <span class="wq-label"><i>3</i> Where do you fly in &amp; out?</span>
+                <div class="wq-io">
+                  <label class="wio">
+                    <span>✈ Arrive into</span>
+                    <select id="qEntry"></select>
+                  </label>
+                  <label class="wio">
+                    <span>✈ Depart from</span>
+                    <select id="qExit"></select>
+                  </label>
+                </div>
+              </div>
+
+              <div class="wq">
+                <span class="wq-label"><i>4</i> Must-visit cities? <small>optional · pick any</small></span>
+                <div class="wq-opts wq-grid" id="qCity" data-q="city" data-multi></div>
+              </div>
+
+              <button class="btn btn-dark wizard-go" id="wizardGo" type="button">
+                ✨ Generate my plan
+              </button>
+            </div>
+
+            <!-- RESULT: generated itinerary -->
+            <div class="plan" id="plan" hidden>
+              <div class="plan-head">
+                <div>
+                  <span class="mini-label">Your high-level plan</span>
+                  <h2 class="plan-title" id="planTitle"></h2>
+                </div>
+                <button class="plan-edit" id="planEdit" type="button">Edit</button>
+              </div>
+              <p class="plan-meta" id="planMeta"></p>
+              <ol class="seg-list" id="segList"></ol>
+              <p class="plan-foot">
+                High-level plan · tap any city for the full local guide.
+              </p>
+            </div>
+
+            <!-- generating shimmer -->
+            <div class="plan-loading" id="planLoading" hidden>
+              <span class="spinner"></span> Building your China plan…
+            </div>
+
+            <!-- CITY DETAIL (opens when a city is tapped) -->
+            <div class="detail-wrap" id="detailWrap" hidden>
+              <button class="detail-back" id="detailBack" type="button">‹ Back to plan</button>
+              <div class="detail-scroll" id="detail">
+            <div class="detail-media">
+              <img id="placePhoto" alt="" />
+            </div>
+
+            <p class="eyebrow" id="placeRegion">North China</p>
+            <h2 class="place-name">
+              <span id="placeName">Beijing</span>
+              <span class="place-cn" id="placeCn">北京</span>
+            </h2>
+            <span class="place-best" id="placeBest"></span>
+
+            <p class="place-summary" id="placeSummary"></p>
+
+            <div class="do-block">
+              <span class="mini-label">What to do here</span>
+              <div id="placeTodo"></div>
+            </div>
+
+            <div class="facts-block">
+              <span class="mini-label">Good to know</span>
+              <dl class="factlist" id="placeFacts"></dl>
+            </div>
+
+            <div class="notes-block">
+              <span class="mini-label">Local notes</span>
+              <div class="notes">
+                <div class="note">
+                  <span class="note-ico">◎</span>
+                  <div><strong>Why locals care</strong><p id="placeWhy"></p></div>
+                </div>
+                <div class="note">
+                  <span class="note-ico">⚠</span>
+                  <div><strong>Common mistake</strong><p id="placeMistake"></p></div>
+                </div>
+                <div class="note">
+                  <span class="note-ico">⊕</span>
+                  <div><strong>Pair it with</strong><p id="placePair"></p></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="show-local">
+              <span class="mini-label">Show a local</span>
+              <span class="show-hint">Tap a phrase to enlarge the Chinese, then show your screen.</span>
+              <div id="placeShow"></div>
+            </div>
+            <p class="photo-credit" id="placeCredit"></p>
+            </div><!-- /detail-scroll -->
+            </div><!-- /detail-wrap -->
+          </div>
+        </aside>
+
+        <button class="btn btn-soft reset-fab" id="resetMap" type="button">Reset view</button>
+      </section>
+
+      <!-- supporting content below the map -->
+      <section class="block tint" id="prepare">
+        <div class="block-head">
+          <div>
+            <p class="eyebrow">Before you go</p>
+            <h2>Sort these before you board.</h2>
+            <p class="block-sub">
+              Three things quietly ruin China trips — paying, getting around,
+              and staying online. Set them up at home, not on arrival.
+              Distilled from real traveller reports, 2025–26.
+            </p>
+          </div>
+        </div>
+
+        <div class="prep-bar" aria-hidden="true"><span id="prepBarFill"></span></div>
+        <p class="prep-bar-label">
+          <strong><span id="prepDone">0</span>/<span id="prepTotal">0</span></strong>
+          done — your progress saves automatically
+          <button id="prepReset" type="button">reset</button>
+        </p>
+
+        <div class="prep-modules" id="prepGrid"></div>
+
+        <div class="prep-actions">
+          <button id="prepPrint" class="btn btn-dark" type="button">⤓ Save / print this checklist</button>
+          <span class="prep-actions-hint">Opens your browser's print dialog — choose “Save as PDF” to keep it on your phone.</span>
+        </div>
+      </section>
+
+      <section class="block" id="support">
+        <div class="block-head">
+          <div>
+            <p class="eyebrow">Support &amp; services</p>
+            <h2>The map stays free. Help is human, only when needed.</h2>
+            <p class="block-sub">
+              Paid services exist for travellers, schools, hotels, or groups who
+              want local judgment — never a paywall on the basics.
+            </p>
+          </div>
+        </div>
+        <div class="service-grid">
+          <article class="service">
+            <span class="svc-ico">♡</span>
+            <h3>Donate</h3>
+            <p>Fund translation and verification of useful China travel notes.</p>
+            <span class="svc-link">Support →</span>
+          </article>
+          <article class="service">
+            <span class="svc-ico">✓</span>
+            <h3>Route review</h3>
+            <p>We check timing, transport, peak-season risk, and alternatives.</p>
+            <span class="svc-link">Get a review →</span>
+          </article>
+          <article class="service">
+            <span class="svc-ico">⚇</span>
+            <h3>Local help</h3>
+            <p>Connect with vetted guides, drivers, city walks, and food tours.</p>
+            <span class="svc-link">Find someone →</span>
+          </article>
+          <article class="service">
+            <span class="svc-ico">▦</span>
+            <h3>Maps for groups</h3>
+            <p>Custom visitor maps for schools, hotels, hostels, and events.</p>
+            <span class="svc-link">Talk B2B →</span>
+          </article>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <div class="foot-brand">
+          <span class="brand-mark sm">华</span> Discover China
+        </div>
+        <p>
+          A public-interest travel project. Map data © OpenStreetMap
+          contributors, basemap © CARTO. City photos via Wikimedia Commons with
+          per-image licenses recorded. Demo basemap — official boundary review
+          required before public release.
+        </p>
+      </footer>
+    </main>
+
+    <!-- app detail modal -->
+    <div class="app-modal" id="appModal" hidden>
+      <div class="app-modal-card" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+        <button class="app-modal-x" type="button" aria-label="Close">×</button>
+        <div class="app-modal-head">
+          <img class="app-modal-logo" alt="" hidden />
+          <div>
+            <span class="app-modal-badge"></span>
+            <h3 class="app-modal-title" id="appModalTitle"></h3>
+          </div>
+        </div>
+        <p class="app-modal-what"></p>
+        <div class="app-modal-sec">
+          <h4>Set up &amp; use — step by step</h4>
+          <ol class="app-modal-howto"></ol>
+        </div>
+        <div class="app-modal-sec">
+          <h4>Key features</h4>
+          <ul class="app-modal-features"></ul>
+        </div>
+        <p class="app-modal-tip"></p>
+      </div>
+    </div>
+
+    <!-- point-and-show: big Chinese to show a local -->
+    <div class="show-overlay" id="showOverlay" hidden>
+      <div class="show-big">
+        <span class="show-big-en" id="showBigEn"></span>
+        <span class="show-big-cn" id="showBigCn"></span>
+        <span class="show-big-tap">Tap anywhere to close</span>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@9.0.38/dist.min.js"></script>
+    <!-- content.js holds all editable text; it must load before app.js -->
+    <script src="./content.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

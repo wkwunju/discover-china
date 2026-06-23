@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Discover China — glowing route arcs (live demo)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700;800&display=swap" rel="stylesheet" />
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+<style>
+  *{margin:0;box-sizing:border-box}
+  html,body,#map{height:100%}
+  body{font-family:Inter,sans-serif;background:#15110d;overflow:hidden}
+  #map{position:absolute;inset:0}
+  .card{position:absolute;top:26px;left:26px;z-index:5;width:340px;padding:20px 22px;border-radius:22px;
+    background:linear-gradient(180deg,rgba(34,28,21,.78),rgba(34,28,21,.62));backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 60px rgba(0,0,0,.5);
+    animation:rise .7s ease-out both}
+  .badge{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;background:rgba(196,125,42,.2);color:#e3a64a;font-size:12px;font-weight:600}
+  .badge i{width:6px;height:6px;border-radius:50%;background:#e3a64a;box-shadow:0 0 8px #e3a64a;display:block}
+  h1{font-family:'Inter Tight';font-weight:800;font-size:30px;line-height:1.05;letter-spacing:-.035em;color:#fff;margin:14px 0 0}
+  h1 .r{color:#e7795f}
+  .card p{font-size:13px;line-height:1.55;color:rgba(255,255,255,.62);margin:10px 0 0}
+  .hint{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);z-index:5;font-size:12.5px;color:rgba(255,255,255,.5);letter-spacing:.03em;background:rgba(20,16,12,.6);padding:7px 16px;border-radius:999px;backdrop-filter:blur(8px)}
+  .hint b{color:#e3a64a}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .maplibregl-ctrl-attrib{font-size:10px}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="card">
+  <span class="badge"><i></i> Built from real Chinese sources</span>
+  <h1>Travel China <span class="r">like a local</span>.</h1>
+  <p>Light flows along the high-speed-rail route — the way the trains actually connect each city.</p>
+</div>
+<div class="hint">live demo · <b>deck.gl TripsLayer</b> glowing route + dark basemap + globe-style fly-in</div>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/deck.gl@9.0.38/dist.min.js"></script>
+<script>
+const CITIES = {
+  beijing:[116.4074,39.9042,'Beijing','北京'],
+  xian:[108.9398,34.3416,'Xi’an','西安'],
+  chengdu:[104.0668,30.5728,'Chengdu','成都'],
+  guilin:[110.29,25.2736,'Guilin','桂林'],
+  hangzhou:[120.1551,30.2741,'Hangzhou','杭州'],
+  shanghai:[121.4737,31.2304,'Shanghai','上海'],
+};
+const ROUTE = ['beijing','xian','chengdu','guilin','hangzhou','shanghai'];
+
+const map = new maplibregl.Map({
+  container:'map',
+  style:'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+  center:[112,32], zoom:2.4, pitch:0, bearing:0,
+  attributionControl:{compact:true},
+});
+
+// build an arc-shaped (lifted) polyline between two lng/lat points
+function arcPts(a,b,n=48){
+  const out=[];
+  for(let i=0;i<=n;i++){
+    const t=i/n;
+    const lng=a[0]+(b[0]-a[0])*t;
+    const lat=a[1]+(b[1]-a[1])*t;
+    out.push([lng,lat]);
+  }
+  return out;
+}
+// full route path + timestamps for the flowing comet
+const path=[]; const stamps=[];
+let clock=0;
+for(let i=0;i<ROUTE.length-1;i++){
+  const seg=arcPts(CITIES[ROUTE[i]],CITIES[ROUTE[i+1]]);
+  seg.forEach((p,k)=>{ if(i>0&&k===0) return; path.push(p); stamps.push(clock); clock+=1; });
+}
+const LOOP = clock + 4;
+
+const nodeData = Object.keys(CITIES).map(k=>({
+  pos:[CITIES[k][0],CITIES[k][1]], name:CITIES[k][2], onRoute:ROUTE.includes(k)
+}));
+
+const overlay = new deck.MapboxOverlay({ interleaved:true, layers:[] });
+map.addControl(overlay);
+
+function layers(time){
+  return [
+    // faint full route line
+    new deck.PathLayer({
+      id:'route-base', data:[{path}],
+      getPath:d=>d.path, getColor:[227,166,74,70], getWidth:2.5,
+      widthUnits:'pixels', capRounded:true, jointRounded:true,
+    }),
+    // soft glow halo of the comet
+    new deck.TripsLayer({
+      id:'trips-glow', data:[{path,timestamps:stamps}],
+      getPath:d=>d.path, getTimestamps:d=>d.timestamps,
+      getColor:[231,121,95], opacity:0.35, widthMinPixels:9,
+      trailLength:2.2, currentTime:time, capRounded:true, jointRounded:true,
+    }),
+    // bright comet core
+    new deck.TripsLayer({
+      id:'trips', data:[{path,timestamps:stamps}],
+      getPath:d=>d.path, getTimestamps:d=>d.timestamps,
+      getColor:[255,221,160], opacity:0.95, widthMinPixels:3,
+      trailLength:1.6, currentTime:time, capRounded:true, jointRounded:true,
+    }),
+    // city glow
+    new deck.ScatterplotLayer({
+      id:'nodes-glow', data:nodeData, getPosition:d=>d.pos,
+      getRadius:d=>d.onRoute?16:9, radiusUnits:'pixels',
+      getFillColor:d=>d.onRoute?[231,121,95,90]:[227,166,74,60],
+    }),
+    // city core
+    new deck.ScatterplotLayer({
+      id:'nodes', data:nodeData, getPosition:d=>d.pos,
+      getRadius:d=>d.onRoute?5:3.5, radiusUnits:'pixels',
+      getFillColor:d=>d.onRoute?[255,200,150]:[227,166,74],
+      stroked:true, getLineColor:[255,255,255], lineWidthMinPixels:1.4,
+    }),
+    new deck.TextLayer({
+      id:'labels', data:nodeData, getPosition:d=>d.pos, getText:d=>d.name,
+      getSize:13, getColor:[255,255,255,230], getPixelOffset:[12,-10],
+      getTextAnchor:'start', fontFamily:'Inter, sans-serif', fontWeight:600,
+      outlineWidth:2, outlineColor:[0,0,0,180], fontSettings:{sdf:true},
+    }),
+  ];
+}
+
+let t=0;
+function animate(){
+  t=(t+0.035)%LOOP;
+  overlay.setProps({layers:layers(t)});
+  requestAnimationFrame(animate);
+}
+
+map.on('load',()=>{
+  animate();
+  // cinematic fly-in
+  map.flyTo({center:[112,32], zoom:3.9, pitch:38, bearing:-12, duration:3600, essential:true});
+});
+</script>
+</body>
+</html>
