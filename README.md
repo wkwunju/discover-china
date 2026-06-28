@@ -6,55 +6,57 @@ itinerary — which cities, how many nights, how to travel between them — plus
 city guide for each stop and a "Before you go" setup checklist (payments, apps,
 connectivity).
 
-No build step, no framework — plain HTML / CSS / vanilla JS with
+Built with **Next.js (App Router) + React**, deployed on Vercel. The map/planner
+itself is a self-contained client-side "island" using
 [MapLibre GL](https://maplibre.org/) and [deck.gl](https://deck.gl/).
 
 ## Run locally
 
 ```
-open index.html
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-(or serve the folder with any static server, e.g. `python3 -m http.server`).
+`npm run build && npm start` runs the production build.
 
 ## Project structure
 
-| File | What it holds |
+| Path | What it holds |
 |------|---------------|
-| `index.html` | Page structure & markup |
-| `styles.css` | All styling (light + dark themes) |
-| `app.js`     | **Structure / logic only** — the planner, map, tabs, rendering |
-| `content.js` | **All editable content** — city data, curated routes, the Before-You-Go modules and app list. Loaded before `app.js`. |
-| `img/`       | Logos and images |
+| `app/layout.tsx` | `<head>`, fonts, global CSS, Vercel Analytics |
+| `app/page.tsx` → `app/LegacyApp.tsx` | the map/planner island (client component) |
+| `app/legacy-markup.html` | the planner's markup, injected verbatim |
+| `app/globals.css` | all styling (light + dark themes) |
+| `app/api/contact/route.ts` | contact/report → Resend email (server route) |
+| `public/content.js` | **all editable content** — city data, routes, Before-You-Go modules, app list |
+| `public/app.js` | the planner logic (map, wizard, tabs, rendering) — vanilla JS |
+| `public/img/`, `public/logo/` | images and logos |
 
-To change any text or data on the site, edit **`content.js`** — you never need to
-touch `app.js`. The top of `content.js` has an editing guide.
+To change any text or data on the site, edit **`public/content.js`** — its top has
+an editing guide. The planner's vanilla logic lives in `public/app.js`; both are
+loaded in order (maplibre → deck.gl → content → app) by `app/LegacyApp.tsx`.
+
+New, dynamic features (database, auth, saved trips) should be built as proper
+Next.js routes/components rather than added to the island.
 
 ## Deploy (Vercel)
 
-This is a static site, so deployment is zero-config:
+Pushed to GitHub `wkwunju/discover-china`; Vercel auto-builds on push
+(`framework: nextjs` is pinned in `vercel.json`). Live at
+[discover-china.travel](https://discover-china.travel).
 
-1. Push this repo to GitHub (done).
-2. On [vercel.com](https://vercel.com) → **Add New → Project** → import this repo.
-3. Framework preset: **Other**. No build command, no output dir — Vercel serves
-   the root, with `index.html` at `/`.
-4. Deploy. Every push to the default branch redeploys automatically.
+### Contact / report email
 
-### Contact / report form
+`app/api/contact/route.ts` emails submissions via [Resend](https://resend.com).
+Set one environment variable in the Vercel project settings:
 
-`api/contact.js` is a Vercel serverless function that emails contact-form
-submissions to the inbox via [Resend](https://resend.com) (same setup as the
-moreach project). To enable it, add one environment variable in the Vercel
-project settings:
+- `RESEND_API_KEY` — your Resend API key.
 
-- `RESEND_API_KEY` — your Resend API key (the same one moreach uses).
-
-It sends from the already-verified `hello@moreach.ai` to `wkwunju@gmail.com`,
-with reply-to set to the visitor. If the key is missing or the site is opened
-as a local file, the form falls back to opening the visitor's email app.
+It sends from the verified `hello@moreach.ai` to `wkwunju@gmail.com`, reply-to the
+visitor. If the key is missing the form falls back to opening the visitor's email app.
 
 ## Note
 
 Map data © OpenStreetMap contributors, basemap © CARTO. City photos via Wikimedia
-Commons with per-image licenses recorded in `content.js`. Demo basemap — official
-boundary review required before any public release.
+Commons with per-image licenses recorded in `public/content.js`. Demo basemap —
+official boundary review required before any public release.
