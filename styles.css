@@ -1313,6 +1313,67 @@ body[data-tab="prep"] #prepare {
   border-color: var(--green);
   box-shadow: 0 0 0 3px var(--green-soft);
 }
+
+/* party-size stepper (how many travelling) */
+.wparty {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0 10px;
+}
+.wparty-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.wparty-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-sm);
+  background: var(--bg-card);
+  padding: 2px;
+}
+.wparty-btn {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  border-radius: calc(var(--r-sm) - 4px);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.wparty-btn:hover {
+  background: var(--green-soft);
+  color: var(--green-deep);
+}
+.wparty-num {
+  width: 42px;
+  text-align: center;
+  border: 0;
+  background: transparent;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  -moz-appearance: textfield;
+}
+.wparty-num::-webkit-outer-spin-button,
+.wparty-num::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.wparty-num:focus {
+  outline: none;
+}
+
 #qCity {
   /* no inner scroll — the city list flows and scrolls with the whole panel */
   padding: 2px;

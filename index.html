@@ -92,6 +92,15 @@
 
               <div class="wq">
                 <span class="wq-label"><i>3</i> Who's coming? <small>optional · pick any</small></span>
+                <div class="wparty">
+                  <span class="wparty-label">How many travelling?</span>
+                  <div class="wparty-step">
+                    <button type="button" class="wparty-btn" id="qPartyMinus" aria-label="Fewer">−</button>
+                    <input class="wparty-num" id="qParty" type="number" min="1" max="30"
+                      inputmode="numeric" value="2" aria-label="Number of travellers" />
+                    <button type="button" class="wparty-btn" id="qPartyPlus" aria-label="More">+</button>
+                  </div>
+                </div>
                 <div class="wq-opts wq-grid" id="qWho" data-q="who" data-multi>
                   <button class="wopt" data-v="kids" type="button">🧒 With kids</button>
                   <button class="wopt" data-v="young" type="button">🎒 Young travellers</button>

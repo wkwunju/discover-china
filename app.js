@@ -40,7 +40,7 @@ const els = {
 let activeId = "beijing";
 let hoverId = null;
 let plannedIds = new Set();
-let answers = { days: "7", focus: "firstTrip", season: "any", who: [], cities: [], entry: "shanghai", exit: "beijing" };
+let answers = { days: "7", focus: "firstTrip", season: "any", who: [], party: 2, cities: [], entry: "shanghai", exit: "beijing" };
 
 /* season intelligence — boosts seasonal picks, warns about off-season cities.
    Only real city ids are referenced. */
@@ -532,7 +532,8 @@ function renderPlan() {
   }
   const flights = legs.filter((l) => l.mode === "Flight").length;
   const rails = legs.length - flights;
-  const bits = [`${segs.length} cities`, `${answers.days} days`];
+  const party = Math.max(1, parseInt(answers.party, 10) || 1);
+  const bits = [`${segs.length} cities`, `${answers.days} days`, `${party} ${party > 1 ? "travellers" : "traveller"}`];
   if (rails) bits.push(`${rails} rail leg${rails > 1 ? "s" : ""}`);
   if (flights) bits.push(`${flights} flight${flights > 1 ? "s" : ""}`);
   els.planMeta.textContent = bits.join(" · ");
@@ -555,6 +556,9 @@ function renderPlan() {
       notes += `<div class="plan-note"><span class="plan-note-ico">${w === "seniors" ? "🧓" : "✓"}</span><div>${note}</div></div>`;
     }
   });
+  if (party >= 5) {
+    notes += `<div class="plan-note"><span class="plan-note-ico">👥</span><div>Travelling as a group of ${party} — book high-speed-rail seats and hotel rooms together as early as the booking window opens (15 days for trains); large groups sell out fastest on popular routes.</div></div>`;
+  }
   els.planNotes.innerHTML = notes;
   els.planNotes.querySelectorAll(".plan-note-add").forEach((b) =>
     b.addEventListener("click", (e) => {
@@ -1100,6 +1104,31 @@ document.querySelectorAll(".wq-opts").forEach((group) => {
           .forEach((o) => o.classList.remove("active"));
       }
     });
+}
+
+// party-size stepper (how many people are travelling)
+{
+  const num = $("qParty");
+  const clamp = (v) => Math.max(1, Math.min(30, v || 1));
+  const sync = () => {
+    answers.party = clamp(parseInt(num.value, 10));
+    num.value = answers.party;
+  };
+  if (num) {
+    num.addEventListener("input", () => {
+      const v = parseInt(num.value, 10);
+      if (v >= 1) answers.party = clamp(v);
+    });
+    num.addEventListener("blur", sync);
+    $("qPartyMinus").addEventListener("click", () => {
+      num.value = clamp(answers.party - 1);
+      sync();
+    });
+    $("qPartyPlus").addEventListener("click", () => {
+      num.value = clamp(answers.party + 1);
+      sync();
+    });
+  }
 }
 
 $("wizardGo").addEventListener("click", generatePlan);
