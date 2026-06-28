@@ -25,3 +25,18 @@ logo/ChatGPT*
 # codex photo-audit working files + AI source images
 img/cities/_audit/
 img/ChatGPT*
+
+# Next.js / Node
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+
+# --- excluded assets (public/ layout) ---
+public/img/cities/_generated/
+public/img/cities/_meta/
+public/img/cities/_audit/
+public/img/ChatGPT*
+public/logo/ChatGPT*
+public/**/*demo*.png

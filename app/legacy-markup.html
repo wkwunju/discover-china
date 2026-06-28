@@ -1,0 +1,327 @@
+<!-- slim nav -->
+<header class="nav">
+  <a class="brand" href="#map" data-tab="map">
+    <img class="brand-logo brand-logo-light" src="/logo/black%20logo.png" alt="Discover China" />
+    <img class="brand-logo brand-logo-dark" src="/logo/orange%20logo.png" alt="" />
+    <span class="brand-name">Discover China</span>
+    <span class="brand-tag">Experience China like a local</span>
+  </a>
+  <nav class="nav-links">
+    <a href="#map" data-tab="map" class="active">Map</a>
+    <a href="#before" data-tab="prep">Before you go</a>
+  </nav>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light/dark">☾</button>
+  <button class="btn btn-dark nav-cta" id="navContact" type="button">
+    <span class="cta-long">Contact / Report</span>
+    <span class="cta-short">Contact</span>
+  </button>
+</header>
+
+<main id="top">
+  <!-- FULL-BLEED MAP STAGE -->
+  <section class="stage" id="stage">
+    <div id="map" class="map"></div>
+    <div class="map-warm"></div>
+
+    <!-- one consolidated panel: filters + place detail + route -->
+    <aside class="overlay panel glass" id="panel" aria-live="polite">
+      <div class="panel-scroll">
+        <span class="pill-badge panel-pill">
+          <span class="dot-live"></span> Built from real Chinese sources
+        </span>
+
+        <!-- INTAKE: 3-question wizard -->
+        <div class="wizard" id="wizard">
+          <h1 class="wizard-title">Plan your <span class="grad">China trip</span>.</h1>
+          <p class="wizard-sub">
+            Answer a few quick questions and we'll build a high-level plan —
+            city intros, what to do, and how to get around. Curated from real
+            Chinese sources and thousands of traveller notes.
+          </p>
+
+          <div class="wq">
+            <span class="wq-label"><i>1</i> How many days in China?</span>
+            <div class="wq-opts" id="qDays" data-q="days">
+              <button class="wopt" data-v="3" type="button">3</button>
+              <button class="wopt" data-v="5" type="button">5</button>
+              <button class="wopt active" data-v="7" type="button">7</button>
+              <button class="wopt" data-v="10" type="button">10</button>
+              <button class="wopt" data-v="14" type="button">14</button>
+            </div>
+            <input class="wdays-custom" id="qDaysCustom" type="number"
+              min="1" max="60" inputmode="numeric"
+              placeholder="or type any number — e.g. 21 days" />
+          </div>
+
+          <div class="wq">
+            <span class="wq-label"><i>2</i> When are you visiting? <small>season shapes what we suggest</small></span>
+            <div class="wq-opts wq-grid" id="qSeason" data-q="season">
+              <button class="wopt" data-v="spring" type="button">🌸 Spring</button>
+              <button class="wopt" data-v="summer" type="button">🌊 Summer</button>
+              <button class="wopt" data-v="autumn" type="button">🍁 Autumn</button>
+              <button class="wopt" data-v="winter" type="button">❄ Winter</button>
+              <button class="wopt active" data-v="any" type="button">Not sure yet</button>
+            </div>
+          </div>
+
+          <div class="wq">
+            <span class="wq-label"><i>3</i> Who's coming? <small>optional · pick any</small></span>
+            <div class="wparty">
+              <span class="wparty-label">How many travelling?</span>
+              <div class="wparty-step">
+                <button type="button" class="wparty-btn" id="qPartyMinus" aria-label="Fewer">−</button>
+                <input class="wparty-num" id="qParty" type="number" min="1" max="30"
+                  inputmode="numeric" value="2" aria-label="Number of travellers" />
+                <button type="button" class="wparty-btn" id="qPartyPlus" aria-label="More">+</button>
+              </div>
+            </div>
+            <div class="wq-opts wq-grid" id="qWho" data-q="who" data-multi>
+              <button class="wopt" data-v="kids" type="button">🧒 With kids</button>
+              <button class="wopt" data-v="young" type="button">🎒 Young travellers</button>
+              <button class="wopt" data-v="family" type="button">👨‍👩‍👧 Family mix</button>
+              <button class="wopt" data-v="seniors" type="button">🧓 Seniors 70+</button>
+            </div>
+          </div>
+
+          <div class="wq">
+            <span class="wq-label"><i>4</i> What's the focus of your trip?</span>
+            <div class="wq-opts wq-grid" id="qFocus" data-q="focus">
+              <button class="wopt active" data-v="firstTrip" type="button">🧭 Discovery</button>
+              <button class="wopt" data-v="food" type="button">🍜 Food</button>
+              <button class="wopt" data-v="nature" type="button">⛰ Nature</button>
+              <button class="wopt" data-v="slow" type="button">🍵 Slow travel</button>
+            </div>
+          </div>
+
+          <div class="wq">
+            <span class="wq-label"><i>5</i> Where do you fly in &amp; out?</span>
+            <div class="wq-io">
+              <label class="wio">
+                <span>✈ Arrive into</span>
+                <select id="qEntry"></select>
+              </label>
+              <label class="wio">
+                <span>✈ Depart from</span>
+                <select id="qExit"></select>
+              </label>
+            </div>
+          </div>
+
+          <div class="wq">
+            <span class="wq-label"><i>6</i> Must-visit cities? <small>optional · pick any</small></span>
+            <div class="wq-opts wq-grid" id="qCity" data-q="city" data-multi></div>
+          </div>
+
+          <button class="btn btn-dark wizard-go" id="wizardGo" type="button">
+            ✨ Generate my plan
+          </button>
+        </div>
+
+        <!-- RESULT: generated itinerary -->
+        <div class="plan" id="plan" hidden>
+          <div class="plan-head">
+            <div>
+              <span class="mini-label">Your high-level plan</span>
+              <h2 class="plan-title" id="planTitle"></h2>
+            </div>
+            <button class="plan-edit" id="planEdit" type="button">Edit</button>
+          </div>
+          <p class="plan-meta" id="planMeta"></p>
+          <div class="plan-notes" id="planNotes"></div>
+          <ol class="seg-list" id="segList"></ol>
+          <p class="plan-foot">
+            High-level plan · tap any city for the full local guide.
+          </p>
+        </div>
+
+        <!-- generating shimmer -->
+        <div class="plan-loading" id="planLoading" hidden>
+          <span class="spinner"></span> Building your China plan…
+        </div>
+
+        <!-- CITY DETAIL (opens when a city is tapped) -->
+        <div class="detail-wrap" id="detailWrap" hidden>
+          <div class="detail-top">
+            <button class="detail-back" id="detailBack" type="button">‹ Back to plan</button>
+            <button class="detail-report" id="detailReport" type="button">⚑ Report / feedback</button>
+          </div>
+          <div class="detail-scroll" id="detail">
+        <div class="detail-media">
+          <img id="placePhoto" alt="" />
+        </div>
+
+        <p class="eyebrow" id="placeRegion">North China</p>
+        <h2 class="place-name">
+          <span id="placeName">Beijing</span>
+          <span class="place-cn" id="placeCn">北京</span>
+        </h2>
+        <span class="place-best" id="placeBest"></span>
+
+        <p class="place-summary" id="placeSummary"></p>
+
+        <div class="do-block">
+          <span class="mini-label">What to do here</span>
+          <div id="placeTodo"></div>
+        </div>
+
+        <div class="facts-block">
+          <span class="mini-label">Good to know</span>
+          <dl class="factlist" id="placeFacts"></dl>
+        </div>
+
+        <div class="tips-block" id="tipsBlock" hidden>
+          <span class="mini-label">Traveller tips <small>from Xiaohongshu</small></span>
+          <ul class="tips-list" id="placeTips"></ul>
+        </div>
+
+        <div class="notes-block">
+          <span class="mini-label">Local notes</span>
+          <div class="notes">
+            <div class="note">
+              <span class="note-ico">◎</span>
+              <div><strong>Why locals care</strong><p id="placeWhy"></p></div>
+            </div>
+            <div class="note">
+              <span class="note-ico">⚠</span>
+              <div><strong>Common mistake</strong><p id="placeMistake"></p></div>
+            </div>
+            <div class="note">
+              <span class="note-ico">⊕</span>
+              <div><strong>Pair it with</strong><p id="placePair"></p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="show-local">
+          <span class="mini-label">Show a local</span>
+          <span class="show-hint">Tap a phrase to enlarge the Chinese, then show your screen.</span>
+          <div id="placeShow"></div>
+        </div>
+        <p class="photo-credit" id="placeCredit"></p>
+        </div><!-- /detail-scroll -->
+        </div><!-- /detail-wrap -->
+      </div>
+    </aside>
+
+    <button class="btn btn-soft reset-fab" id="resetMap" type="button">Reset view</button>
+  </section>
+
+  <!-- supporting content below the map -->
+  <section class="block tint" id="prepare">
+    <div class="block-head">
+      <div>
+        <p class="eyebrow">Before you go</p>
+        <h2>Sort these before you board.</h2>
+        <p class="block-sub">
+          Four things quietly trip up China visitors — paying, the language
+          gap, staying online, and getting around. Set them up at home, not
+          on arrival. Distilled from real traveller reports, 2025–26.
+        </p>
+      </div>
+    </div>
+
+    <div class="prep-bar" aria-hidden="true"><span id="prepBarFill"></span></div>
+    <p class="prep-bar-label">
+      <strong><span id="prepDone">0</span>/<span id="prepTotal">0</span></strong>
+      done — your progress saves automatically
+      <button id="prepReset" type="button">reset</button>
+    </p>
+
+    <div class="prep-modules" id="prepGrid"></div>
+
+    <div class="prep-actions">
+      <button id="prepPrint" class="btn btn-dark" type="button">⤓ Save / print this checklist</button>
+      <span class="prep-actions-hint">Opens your browser's print dialog — choose “Save as PDF” to keep it on your phone.</span>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="foot-brand">
+      <img class="brand-logo brand-logo-light foot-logo" src="/logo/black%20logo.png" alt="" />
+      <img class="brand-logo brand-logo-dark foot-logo" src="/logo/orange%20logo.png" alt="" />
+      Discover China
+    </div>
+    <p>
+      A public-interest travel project. Map data © OpenStreetMap
+      contributors, basemap © CARTO. City photos via Wikimedia Commons with
+      per-image licenses recorded. Demo basemap — official boundary review
+      required before public release.
+    </p>
+  </footer>
+</main>
+
+<!-- app detail modal -->
+<div class="app-modal" id="appModal" hidden>
+  <div class="app-modal-card" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+    <button class="app-modal-x" type="button" aria-label="Close">×</button>
+    <div class="app-modal-head">
+      <img class="app-modal-logo" alt="" hidden />
+      <div>
+        <span class="app-modal-badge"></span>
+        <h3 class="app-modal-title" id="appModalTitle"></h3>
+      </div>
+    </div>
+    <p class="app-modal-what"></p>
+    <div class="app-modal-sec">
+      <h4>Set up &amp; use — step by step</h4>
+      <ol class="app-modal-howto"></ol>
+    </div>
+    <div class="app-modal-sec">
+      <h4>Key features</h4>
+      <ul class="app-modal-features"></ul>
+    </div>
+    <p class="app-modal-tip"></p>
+  </div>
+</div>
+
+<!-- point-and-show: big Chinese to show a local -->
+<div class="show-overlay" id="showOverlay" hidden>
+  <div class="show-big">
+    <span class="show-big-en" id="showBigEn"></span>
+    <span class="show-big-cn" id="showBigCn"></span>
+    <span class="show-big-tap">Tap anywhere to close</span>
+  </div>
+</div>
+
+<!-- contact / report modal -->
+<div class="contact-modal" id="contactModal" hidden>
+  <div class="contact-card" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
+    <button class="contact-x" type="button" aria-label="Close">×</button>
+    <h3 class="contact-title" id="contactTitle">Contact &amp; feedback</h3>
+    <p class="contact-sub" id="contactSub">
+      Spotted a mistake, or have a local tip to add? Tell us — it reaches the team directly.
+    </p>
+    <form id="contactForm">
+      <label class="contact-field">
+        <span>About</span>
+        <input type="text" id="contactAbout" name="about" placeholder="General — or a city / page" />
+      </label>
+      <label class="contact-field">
+        <span>Type</span>
+        <select name="type">
+          <option>Feedback / a tip to add</option>
+          <option>Report a mistake</option>
+          <option>Partnership / other</option>
+        </select>
+      </label>
+      <label class="contact-field">
+        <span>Your email <small>(optional, so we can reply)</small></span>
+        <input type="email" name="email" placeholder="you@example.com" />
+      </label>
+      <label class="contact-field">
+        <span>Message</span>
+        <textarea name="message" rows="5" required placeholder="What's on your mind?"></textarea>
+      </label>
+      <button class="btn btn-dark contact-send" type="submit">Send</button>
+      <p class="contact-status" id="contactStatus"></p>
+    </form>
+  </div>
+</div>
+
+<!-- tap-to-enlarge image lightbox -->
+<div class="img-lightbox" id="imgLightbox" hidden>
+  <img id="imgLightboxImg" alt="" />
+  <span class="img-lightbox-tap">Tap anywhere to close</span>
+</div>
+
+<div class="toast" id="toast"></div>
