@@ -33,13 +33,63 @@ const els = {
   segList: $("segList"),
   planTitle: $("planTitle"),
   planMeta: $("planMeta"),
+  planNotes: $("planNotes"),
   detailWrap: $("detailWrap"),
 };
 
 let activeId = "beijing";
 let hoverId = null;
 let plannedIds = new Set();
-let answers = { days: "7", focus: "firstTrip", cities: [], entry: "shanghai", exit: "beijing" };
+let answers = { days: "7", focus: "firstTrip", season: "any", who: [], cities: [], entry: "shanghai", exit: "beijing" };
+
+/* season intelligence — boosts seasonal picks, warns about off-season cities.
+   Only real city ids are referenced. */
+const SEASONS = {
+  spring: {
+    label: "Spring", months: "Mar–May", emoji: "🌸",
+    boost: ["hangzhou", "suzhou", "wuzhen", "dali", "guilin", "lishui", "nanjing"],
+    pick: { id: "hangzhou", line: "West Lake and the Jiangnan water towns are at their spring best." },
+    caution: {},
+  },
+  summer: {
+    label: "Summer", months: "Jun–Aug", emoji: "🌊",
+    boost: ["qingdao", "dalian", "yantai", "dali", "banna", "xinjiang", "daocheng", "tibet"],
+    pick: { id: "qingdao", line: "Escape the inland heat on Qingdao's cool coast — beaches and fresh beer." },
+    caution: {
+      chongqing: "a summer 'furnace' city — 38–40°C and humid",
+      nanjing: "one of China's hottest summer cities",
+      wuzhen: "hot and humid in midsummer",
+    },
+  },
+  autumn: {
+    label: "Autumn", months: "Sep–Nov", emoji: "🍁",
+    boost: ["beijing", "daocheng", "xinjiang", "zhangjiajie", "dunhuang", "guizhou"],
+    pick: { id: "daocheng", line: "Peak season — golden larches and clear plateau skies." },
+    caution: {},
+  },
+  winter: {
+    label: "Winter", months: "Dec–Feb", emoji: "❄",
+    boost: ["harbin", "banna", "dali", "beijing"],
+    pick: { id: "harbin", line: "The Ice & Snow World is open — a once-in-a-lifetime winter spectacle, and a hit with kids and young travellers." },
+    caution: {
+      zhangjiajie: "trails and glass walkways can ice over and close",
+      daocheng: "deep cold and snow can close the high passes",
+      tibet: "very cold, with limited routes and services",
+      guilin: "cold, grey and often rainy in winter",
+    },
+  },
+  any: { label: "Anytime", boost: [], pick: null, caution: {} },
+};
+
+/* who's-coming intelligence — boosts suitable cities; seniors prefer major cities. */
+const WHO = {
+  kids: { label: "With kids", boost: ["harbin", "chengdu", "shanghai", "xian", "guilin", "banna"], note: "Family-friendly, interactive stops first." },
+  young: { label: "Young travellers", boost: ["harbin", "chongqing", "chengdu", "dali", "zhangjiajie", "daocheng"], note: "" },
+  family: { label: "Family mix", boost: ["beijing", "xian", "chengdu", "hangzhou", "guilin", "suzhou"], note: "" },
+  seniors: { label: "Seniors 70+", major: true, note: "Prioritising major cities for easier access to medical care, with lighter walking." },
+};
+/* cities that involve high altitude, long transfers or hard hiking — dropped for seniors */
+const STRENUOUS = new Set(["tibet", "daocheng", "zhangjiajie", "enshi", "guizhou", "lishui", "xinjiang"]);
 
 /* international connectivity rank (higher = more / bigger int'l flights).
    Drives the arrive/depart order and the city-card "flight access" fact. */
@@ -67,6 +117,10 @@ const GATEWAY = {
   daocheng: 2,
   lishui: 2,
   wuzhen: 2,
+  harbin: 5,
+  qingdao: 6,
+  dalian: 6,
+  yantai: 3,
 };
 let currentRoute = [];
 let map = null;
@@ -395,14 +449,22 @@ function orderFrom(start, pts) {
    - first segment = arrival city, last = departure city
    - must-visit cities are guaranteed; otherwise the focus route fills the middle
    - no forced Beijing — cities come only from entry/exit/must-visit/curated */
-function buildItinerary({ days, focus, cities, entry, exit }) {
+function buildItinerary({ days, focus, cities, entry, exit, season, who }) {
   const want = Math.max(2, Math.min(60, parseInt(days, 10) || 7));
   const entryD = byId(entry);
   const exitD = byId(exit);
+  const sea = SEASONS[season] || SEASONS.any;
+  const whoArr = Array.isArray(who) ? who : [];
+  const seniors = whoArr.includes("seniors");
+  const boostIds = new Set([
+    ...(sea.boost || []),
+    ...whoArr.flatMap((w) => WHO[w]?.boost || []),
+  ]);
 
   // the pool that fills the middle of the trip
   let pool;
   if (cities && cities.length) {
+    // user picked must-visit cities — respect them exactly
     pool = cities.map(byId).filter(Boolean);
   } else {
     const plans = PLANS[focus] || PLANS.firstTrip;
@@ -413,6 +475,23 @@ function buildItinerary({ days, focus, cities, entry, exit }) {
     pool = [...new Set(plans[baseLen] || PLANS.firstTrip[7])]
       .map(byName)
       .filter(Boolean);
+    const targetCount = pool.length;
+
+    // season's signature pick joins the auto pool (e.g. Harbin in winter)
+    if (sea.pick && byId(sea.pick.id) && !pool.some((d) => d.id === sea.pick.id)) {
+      pool.unshift(byId(sea.pick.id));
+    }
+    // drop cities this season cautions against
+    pool = pool.filter((d) => !(sea.caution && sea.caution[d.id]));
+    // seniors: keep it to major, easy-access cities
+    if (seniors) {
+      pool = pool.filter((d) => (GATEWAY[d.id] || 0) >= 6 && !STRENUOUS.has(d.id));
+    }
+    // float boosted (seasonal / group-fit) cities to the front, then hold the
+    // original trip size so the plan doesn't balloon
+    pool.sort((a, b) => (boostIds.has(b.id) ? 1 : 0) - (boostIds.has(a.id) ? 1 : 0));
+    if (pool.length > targetCount) pool = pool.slice(0, targetCount);
+    if (!pool.length) pool = [byId(sea.pick?.id) || byName("Beijing")].filter(Boolean);
   }
 
   // middle = pool minus the entry/exit anchors
@@ -458,6 +537,34 @@ function renderPlan() {
   if (flights) bits.push(`${flights} flight${flights > 1 ? "s" : ""}`);
   els.planMeta.textContent = bits.join(" · ");
 
+  // season + who advisories above the itinerary
+  const sea = SEASONS[answers.season] || SEASONS.any;
+  const routeIds = new Set(segs.map((s) => byName(s.name)?.id).filter(Boolean));
+  let notes = "";
+  if (sea.pick && byId(sea.pick.id) && !routeIds.has(sea.pick.id) && answers.season !== "any") {
+    const p = byId(sea.pick.id);
+    notes += `<div class="plan-note plan-note--pick">
+      <span class="plan-note-ico">${sea.emoji || "★"}</span>
+      <div><b>${sea.label} pick — ${p.name}.</b> ${sea.pick.line}
+        <button class="plan-note-add" type="button" data-add="${p.id}">+ Add ${p.name}</button>
+      </div></div>`;
+  }
+  (answers.who || []).forEach((w) => {
+    const note = WHO[w]?.note;
+    if (note) {
+      notes += `<div class="plan-note"><span class="plan-note-ico">${w === "seniors" ? "🧓" : "✓"}</span><div>${note}</div></div>`;
+    }
+  });
+  els.planNotes.innerHTML = notes;
+  els.planNotes.querySelectorAll(".plan-note-add").forEach((b) =>
+    b.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = b.dataset.add;
+      if (!answers.cities.includes(id)) answers.cities.push(id);
+      renderPlan();
+    }),
+  );
+
   // interleave city segments with transport legs
   let html = "";
   let dayCursor = 1;
@@ -489,6 +596,7 @@ function renderPlan() {
       <div class="seg-body">
         <h3>${d.name} <i>${d.cn}</i> <span class="seg-nights">${s.nights} night${s.nights > 1 ? "s" : ""}</span></h3>
         <p class="seg-region">${d.region} · ${d.bestFor}</p>
+        ${sea.caution && sea.caution[d.id] ? `<p class="seg-caution">⚠ In ${sea.label.toLowerCase()}, ${sea.caution[d.id]}.</p>` : ""}
         ${body}
         <button class="seg-more" type="button" data-id="${d.id}">City guide →</button>
       </div>
@@ -689,6 +797,20 @@ function ckRow(key, label, why, opts = {}) {
   </label>`;
 }
 
+/* optional self-driving sub-block, rendered as a native collapsible */
+function driveBlockHTML(drv) {
+  const rows = drv.rows
+    .map((r) => `<div class="drive-row"><h5>${r.q}</h5><p>${r.a}</p></div>`)
+    .join("");
+  return `<details class="drive-block">
+    <summary><span class="drive-ico">🚗</span><span class="drive-sum-t">${drv.label}</span><span class="chev">▾</span></summary>
+    <div class="drive-body">
+      ${drv.intro ? `<p class="drive-intro">${drv.intro}</p>` : ""}
+      ${rows}
+    </div>
+  </details>`;
+}
+
 function renderPrep() {
   els.prepGrid.innerHTML = ["pay", "comm", "net", "mob"]
     .map((mid) => PREP.find((x) => x.id === mid))
@@ -752,6 +874,7 @@ function renderPrep() {
         </div>`
             : ""
         }
+        ${m.drive ? driveBlockHTML(m.drive) : ""}
         <button class="prep-more" type="button" aria-expanded="false">
           Common mistakes &amp; traveller notes <span class="chev">▾</span>
         </button>
@@ -946,9 +1069,12 @@ document.querySelectorAll(".wq-opts").forEach((group) => {
     if (!opt) return;
     if (group.dataset.multi !== undefined) {
       opt.classList.toggle("active");
-      answers.cities = [...group.querySelectorAll(".wopt.active")]
+      const vals = [...group.querySelectorAll(".wopt.active")]
         .map((o) => o.dataset.v)
         .filter(Boolean);
+      // the city picker still feeds answers.cities; other multi groups use their data-q
+      if (group.dataset.q === "city") answers.cities = vals;
+      else answers[group.dataset.q] = vals;
     } else {
       group.querySelectorAll(".wopt").forEach((o) => o.classList.remove("active"));
       opt.classList.add("active");

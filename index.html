@@ -80,7 +80,28 @@
               </div>
 
               <div class="wq">
-                <span class="wq-label"><i>2</i> What's the focus of your trip?</span>
+                <span class="wq-label"><i>2</i> When are you visiting? <small>season shapes what we suggest</small></span>
+                <div class="wq-opts wq-grid" id="qSeason" data-q="season">
+                  <button class="wopt" data-v="spring" type="button">🌸 Spring</button>
+                  <button class="wopt" data-v="summer" type="button">🌊 Summer</button>
+                  <button class="wopt" data-v="autumn" type="button">🍁 Autumn</button>
+                  <button class="wopt" data-v="winter" type="button">❄ Winter</button>
+                  <button class="wopt active" data-v="any" type="button">Not sure yet</button>
+                </div>
+              </div>
+
+              <div class="wq">
+                <span class="wq-label"><i>3</i> Who's coming? <small>optional · pick any</small></span>
+                <div class="wq-opts wq-grid" id="qWho" data-q="who" data-multi>
+                  <button class="wopt" data-v="kids" type="button">🧒 With kids</button>
+                  <button class="wopt" data-v="young" type="button">🎒 Young travellers</button>
+                  <button class="wopt" data-v="family" type="button">👨‍👩‍👧 Family mix</button>
+                  <button class="wopt" data-v="seniors" type="button">🧓 Seniors 70+</button>
+                </div>
+              </div>
+
+              <div class="wq">
+                <span class="wq-label"><i>4</i> What's the focus of your trip?</span>
                 <div class="wq-opts wq-grid" id="qFocus" data-q="focus">
                   <button class="wopt active" data-v="firstTrip" type="button">🧭 Discovery</button>
                   <button class="wopt" data-v="food" type="button">🍜 Food</button>
@@ -90,7 +111,7 @@
               </div>
 
               <div class="wq">
-                <span class="wq-label"><i>3</i> Where do you fly in &amp; out?</span>
+                <span class="wq-label"><i>5</i> Where do you fly in &amp; out?</span>
                 <div class="wq-io">
                   <label class="wio">
                     <span>✈ Arrive into</span>
@@ -104,7 +125,7 @@
               </div>
 
               <div class="wq">
-                <span class="wq-label"><i>4</i> Must-visit cities? <small>optional · pick any</small></span>
+                <span class="wq-label"><i>6</i> Must-visit cities? <small>optional · pick any</small></span>
                 <div class="wq-opts wq-grid" id="qCity" data-q="city" data-multi></div>
               </div>
 
@@ -123,6 +144,7 @@
                 <button class="plan-edit" id="planEdit" type="button">Edit</button>
               </div>
               <p class="plan-meta" id="planMeta"></p>
+              <div class="plan-notes" id="planNotes"></div>
               <ol class="seg-list" id="segList"></ol>
               <p class="plan-foot">
                 High-level plan · tap any city for the full local guide.

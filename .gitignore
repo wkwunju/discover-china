@@ -21,3 +21,7 @@ img/cities/_meta/
 tools/
 img/*demo*.png
 logo/ChatGPT*
+
+# codex photo-audit working files + AI source images
+img/cities/_audit/
+img/ChatGPT*

@@ -1,31 +1,43 @@
 :root {
-  /* ===== Warm Light (default) ===== */
-  --bg: #ffffff;
-  --bg-soft: #faf9f6;
-  --bg-card: #ffffff;
-  --paper: #f6f4f0;
-  --ink: #16181d;
-  --ink-2: #545b63;
-  --ink-3: #8b9099;
-  --line: #ebe8e1;
-  --line-2: #e0dcd2;
+  /* ===== Clay — claymation-meets-data, cream canvas + near-black ink ===== */
+  --bg: #fffaf0;          /* cream-tinted canvas — the Clay signature */
+  --bg-soft: #faf5e8;     /* surface-soft (footer/CTA bands) */
+  --bg-card: #fffefb;     /* card surface — barely lifted off canvas */
+  --paper: #f5f0e0;       /* surface-card (cream feature cards) */
+  --ink: #0a0a0a;         /* near-black warm */
+  --ink-2: #3a3a3a;
+  --ink-3: #6a6a6a;
+  --line: #e7e2d4;        /* warm hairline */
+  --line-2: #ddd6c4;
 
-  /* warm amber-gold primary */
+  /* amber-gold kept as the warm China accent (bullets, links, highlights) */
   --green: #c47d2a;
   --green-deep: #9a5d16;
-  --green-soft: #f7ecd9;
+  --green-soft: #f6edda;
   /* cinnabar accent (朱砂) */
   --amber: #d65a45;
   --cinnabar: #d65a45;
   --cinnabar-deep: #b23f2c;
   --cinnabar-soft: #fbeae5;
 
-  --shadow-sm: 0 1px 2px rgba(22, 24, 29, 0.05), 0 1px 3px rgba(22, 24, 29, 0.05);
-  --shadow-md: 0 10px 24px rgba(22, 24, 29, 0.09), 0 2px 6px rgba(22, 24, 29, 0.05);
-  --shadow-lg: 0 24px 60px rgba(22, 24, 29, 0.18), 0 6px 16px rgba(22, 24, 29, 0.08);
-  --r-sm: 11px;
+  /* Clay saturated feature-card palette */
+  --clay-pink: #ff4d8b;
+  --clay-teal: #1a3a3a;
+  --clay-lavender: #b8a4ed;
+  --clay-peach: #ffb084;
+  --clay-ochre: #e8b94a;
+  --clay-mint: #a4d4c5;
+  --clay-coral: #ff6b5a;
+
+  /* Clay keeps depth near-flat — colour contrast carries it, not shadow */
+  --shadow-sm: 0 1px 2px rgba(40, 30, 12, 0.04);
+  --shadow-md: 0 4px 16px rgba(40, 30, 12, 0.06), 0 1px 3px rgba(40, 30, 12, 0.04);
+  --shadow-lg: 0 14px 40px rgba(40, 30, 12, 0.10), 0 4px 12px rgba(40, 30, 12, 0.05);
+  /* Clay rounding is generous: 12 buttons · 16 cards · 24 feature cards */
+  --r-sm: 12px;
   --r-md: 16px;
-  --r-lg: 22px;
+  --r-lg: 24px;
+  --r-xl: 28px;
   --nav-h: 60px;
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --display: "Inter Tight", "Inter", sans-serif;
@@ -57,8 +69,8 @@ a {
   gap: 6px;
   font-weight: 600;
   font-size: 14px;
-  border-radius: 999px;
-  padding: 10px 18px;
+  border-radius: var(--r-sm); /* Clay: 12px rounded buttons, not pill */
+  padding: 11px 18px;
   border: 1px solid transparent;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease,
@@ -85,7 +97,7 @@ a {
 }
 .btn-soft:hover {
   color: var(--ink);
-  background: #fff;
+  background: var(--bg-card);
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
@@ -741,7 +753,7 @@ img.todo-thumb:hover {
   font-weight: 500;
   padding: 6px 12px;
   border-radius: 999px;
-  background: #fff;
+  background: var(--bg-card);
   border: 1px solid var(--line-2);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -878,7 +890,7 @@ body.show-open .reset-fab {
   overflow: hidden;
 }
 .meta-grid div {
-  background: #fff;
+  background: var(--bg-card);
   padding: 11px 13px;
 }
 .meta-grid span {
@@ -996,7 +1008,7 @@ body.show-open .reset-fab {
   padding: 8px 12px;
   border-radius: var(--r-sm);
   border: 1px solid var(--line-2);
-  background: #fff;
+  background: var(--bg-card);
   cursor: pointer;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -1024,7 +1036,7 @@ body.show-open .reset-fab {
   transition: background 0.15s ease, color 0.15s ease;
 }
 .route-toggle:hover {
-  background: #fff;
+  background: var(--bg-card);
   color: var(--ink);
 }
 .route-toggle .chev {
@@ -1063,7 +1075,7 @@ body.show-open .reset-fab {
   position: relative;
   flex: 0 0 auto;
   width: 132px;
-  background: #fff;
+  background: var(--bg-card);
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
   padding: 11px 12px;
@@ -1434,6 +1446,65 @@ body[data-tab="prep"] #prepare {
   color: var(--ink-3);
   margin: 8px 0 0;
 }
+
+/* season / who advisories above the itinerary */
+.plan-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.plan-notes:empty {
+  margin-top: 0;
+}
+.plan-note {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 10px 12px;
+}
+.plan-note--pick {
+  background: var(--green-soft);
+  border-color: #ecd3a3;
+}
+.plan-note-ico {
+  font-size: 15px;
+  line-height: 1.3;
+  flex-shrink: 0;
+}
+.plan-note b {
+  color: var(--ink);
+}
+.plan-note-add {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--ink);
+  border: 0;
+  border-radius: var(--r-sm);
+  padding: 5px 11px;
+  cursor: pointer;
+}
+.plan-note-add:hover {
+  background: var(--green-deep);
+}
+.seg-caution {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--cinnabar-deep);
+  margin: 4px 0 0;
+  font-weight: 600;
+}
+
 .seg-list {
   list-style: none;
   margin: 18px 0 0;
@@ -1944,7 +2015,7 @@ body[data-tab="prep"] #prepare {
   align-items: start;
 }
 .prep-card {
-  background: #fff;
+  background: var(--bg-card);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
   padding: 20px;
@@ -2012,12 +2083,13 @@ body[data-tab="prep"] #prepare {
   display: grid;
   /* small image strip on the left, content fills the rest */
   grid-template-columns: 132px minmax(0, 1fr);
-  background: #fff;
+  background: var(--bg-card);
   border: 1px solid var(--line);
-  border-radius: var(--r-md);
+  border-radius: var(--r-lg); /* Clay: generous 24px card rounding */
   box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
+
 /* image-less modules: full-width text, no empty column */
 .prep-module--noimg {
   grid-template-columns: 1fr;
@@ -2090,7 +2162,7 @@ body[data-tab="prep"] #prepare {
   height: 19px;
   border-radius: 6px;
   border: 1.5px solid var(--line-2);
-  background: #fff;
+  background: var(--bg-card);
   display: grid;
   place-items: center;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
@@ -2256,7 +2328,7 @@ body[data-tab="prep"] #prepare {
   align-items: flex-start;
   gap: 10px;
   padding: 13px 14px;
-  background: #fff;
+  background: var(--bg-card);
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
   box-shadow: var(--shadow-sm);
@@ -2326,6 +2398,69 @@ body[data-tab="prep"] #prepare {
 .m-block {
   margin-top: 16px;
 }
+
+/* self-driving collapsible (Mobility module) */
+.drive-block {
+  margin-top: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg-soft);
+  overflow: hidden;
+}
+.drive-block > summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 16px;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+  list-style: none;
+}
+.drive-block > summary::-webkit-details-marker {
+  display: none;
+}
+.drive-ico {
+  font-size: 16px;
+}
+.drive-sum-t {
+  flex: 1;
+}
+.drive-block .chev {
+  font-size: 12px;
+  color: var(--ink-3);
+  transition: transform 0.2s ease;
+}
+.drive-block[open] .chev {
+  transform: rotate(180deg);
+}
+.drive-body {
+  padding: 2px 16px 16px;
+}
+.drive-intro {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0 0 14px;
+}
+.drive-row {
+  padding: 11px 0;
+  border-top: 1px solid var(--line);
+}
+.drive-row h5 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.drive-row p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
 .m-label {
   display: flex;
   align-items: center;

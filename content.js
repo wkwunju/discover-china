@@ -214,6 +214,13 @@ const TODO_IMG = {
   "Dai grilled fish & lemongrass chicken": "./img/cities/banna-eat1.jpg",
   "Pineapple rice": "./img/cities/banna-eat2.jpg",
   "Tropical fruit — durian, mangosteen, passionfruit": "./img/cities/banna-eat3.jpg",
+  "Wild Elephant Valley rainforest walk": "./img/cities/banna-exp1.jpg",
+  "Ciqikou ancient riverside town": "./img/cities/chongqing-see3.jpg",
+  "Photograph golden larches in late September": "./img/cities/daocheng-exp2.jpg",
+  "Dunhuang Museum & the Yardang badlands": "./img/cities/dunhuang-see3.jpg",
+  "Yunhe rice terraces at sunrise": "./img/cities/lishui-see1.jpg",
+  "Crispy garlic chicken frames (鸡架)": "./img/cities/quanzhou-eat1.jpg",
+  "Dai-style grilled fish and flowers": "./img/cities/yunnan-eat3.jpg",
 };
 
 const PREP = [
@@ -290,6 +297,33 @@ const PREP = [
       ],
     },
     quote: "Saving addresses in Chinese and using DiDi instead of station touts made getting around shockingly smooth.",
+    drive: {
+      label: "Driving yourself in China",
+      intro:
+        "For most trips, high-speed rail plus DiDi beats self-driving. Rent a car mainly for rural loops where transit is thin — Yunnan, Hainan, the grasslands, mountain scenery. If you do drive, here's what actually matters.",
+      rows: [
+        {
+          q: "Your foreign licence is NOT valid — and neither is an IDP",
+          a: "China does not recognise foreign driving licences or the International Driving Permit (IDP). To drive legally you must get a temporary Chinese driving permit. It's usually free or cheap and valid for your whole stay (up to ~90 days).",
+        },
+        {
+          q: "Getting the temporary permit",
+          a: "Easiest at a major international airport on arrival — Beijing, Shanghai (Pudong), Guangzhou and Hainan have licence-conversion desks. Bring your passport, your home licence and a certified Chinese translation. Big car-rental branches can also arrange it. For longer validity some provinces ask you to pass a short theory test (rules-of-the-road, in English).",
+        },
+        {
+          q: "Where to rent",
+          a: "Local apps are cheapest and everywhere: eHi (一嗨租车) and CAR Inc / Shenzhou (神州租车), plus international brands at airports. Book in-app; deposits are often waived with a good Alipay/Sesame credit score. Confirm the branch accepts a foreign renter and your temporary permit before you pay.",
+        },
+        {
+          q: "Rules & how it differs from home",
+          a: "Drive on the right. Drink-driving is zero-tolerance and heavily enforced. Speed and red-light cameras are everywhere and fines attach to the car (and your deposit). Many big cities cap out-of-town plates on certain roads/days — check before entering. Expressway tolls are paid by ETC or Alipay. Horns and assertive lane-changing are normal; drive defensively.",
+        },
+        {
+          q: "Road & seasonal conditions",
+          a: "Expressways are modern and excellent; rural and mountain roads vary a lot. In winter the northeast (Harbin) and high plateaus (Tibet, Daocheng/Garzê) get ice, snow and closed passes — not for first-timers; hire a car-with-driver instead. Tibet has special permit and route rules that effectively rule out casual self-drive.",
+        },
+      ],
+    },
   },
   {
     id: "net",
@@ -2084,6 +2118,276 @@ const DESTINATIONS = [
     ],
     photo: commonsFile("Man Chunman Buddhist Temple, Dai Ethnic Garden, Xishuangbanna Prefecture, China.jpg"),
     credit: "Photo: Wikimedia Commons · Jacek Karczmarczyk · CC BY 3.0",
+  },
+  {
+    id: "harbin",
+    name: "Harbin",
+    cn: "哈尔滨",
+    region: "Northeast China (Heilongjiang)",
+    lng: 126.5349,
+    lat: 45.8038,
+    tags: ["Winter", "Ice festival", "Russian heritage"],
+    stay: "2–3 days",
+    bestFor: "Winter ice & snow",
+    season: "Dec–Feb",
+    hub: "Good",
+    confidence: "Confirmed",
+    summary:
+      "China's winter capital: the Ice & Snow World — a city of illuminated ice castles you can walk through — plus Russian-era boulevards, onion-dome churches and a deep-frozen river that turns into a playground.",
+    why: "Locals treat winter as the high season, not something to endure — sledging on the Songhua River, ice lanterns and frozen-pear snacks are the whole point.",
+    mistake:
+      "Coming for the Ice & Snow World outside its season — the big park is only built for roughly late December to late February.",
+    pair: "Fly in from Beijing (about 2h) for a tight 2-night winter add-on.",
+    keywords: ["哈尔滨 冰雪大世界", "哈尔滨 攻略 冬天", "中央大街 美食"],
+    experiences: [
+      "Spend an evening inside the Ice & Snow World ice city, lit up after dark",
+      "Walk Central Street (Zhongyang Dajie) and St Sophia Cathedral",
+      "Try Russian-influenced food and a frozen pear on the Songhua River ice",
+    ],
+    seasonLong:
+      "This is a winter destination (Dec–Feb) — that is when the Ice & Snow World and snow sculptures exist. Expect −15 to −25°C; dress in serious layers. Summer is mild and pleasant but the ice attractions are gone.",
+    todo: {
+      see: [
+        "Harbin Ice & Snow World (冰雪大世界) — winter only",
+        "St Sophia Cathedral (圣索菲亚教堂)",
+        "Central Street (中央大街) pedestrian boulevard",
+      ],
+      experience: [
+        "Sun Island snow-sculpture expo",
+        "Sledge and ice-slide on the frozen Songhua River",
+        "Siberian Tiger Park by the river",
+      ],
+      eat: [
+        "Russian-style 'guo bao rou' sweet-sour pork",
+        "Harbin red sausage (红肠)",
+        "Frozen pear & Madieer ice-cream bar on Central Street",
+      ],
+    },
+    show: [
+      { en: "Ice & Snow World", cn: "冰雪大世界" },
+      { en: "St Sophia Cathedral", cn: "圣索菲亚教堂" },
+      { en: "Central Street", cn: "中央大街" },
+      { en: "Sun Island", cn: "太阳岛" },
+      { en: "Is it open today?", cn: "今天开门吗？" },
+    ],
+    facts: {
+      rail: "High-speed rail to Beijing (~5h) and the northeast; flights are faster",
+      metro: "Yes — a growing metro covers the city centre",
+      flights: "Taiping International (HRB) — domestic plus some Russia/Korea/Japan routes",
+      english: "Limited — translate apps strongly recommended",
+      prices:
+        "Casual meal 20–40 yuan · restaurant dinner 70–130 yuan per person · mid-range hotel 300–600 yuan (higher in ice-festival peak)",
+      climate: "Winter −15 to −25°C · summer 18 to 28°C · the draw is deep winter",
+    },
+    tips: [
+      "The Ice & Snow World is an evening experience — it looks best after dark when the ice is lit; go around 4–5pm and stay into the night.",
+      "Dress for −25°C: thermal base layers, a real down coat, snow boots, gloves and hand-warmers. Keep your phone warm — batteries die fast in the cold.",
+      "Buy Ice & Snow World tickets on the official mini-program; the park is huge, so pick the areas you want and don't try to do all of it.",
+    ],
+    photo: commonsFile("Snow and Ice World festival in Harbin, China (3238519038).jpg"),
+    credit: "Photo: Wikimedia Commons · CC BY 2.0",
+  },
+  {
+    id: "qingdao",
+    name: "Qingdao",
+    cn: "青岛",
+    region: "Shandong (North China coast)",
+    lng: 120.3826,
+    lat: 36.0671,
+    tags: ["Coast", "Beer", "German heritage"],
+    stay: "2 days",
+    bestFor: "Seaside & beer",
+    season: "May–Oct",
+    hub: "Good",
+    confidence: "Confirmed",
+    summary:
+      "A breezy seaside city of red-roofed German colonial streets, swimming beaches and China's most famous beer. Easygoing, fresh-seafood, walk-the-coast energy.",
+    why: "Locals drink draught Tsingtao sold by the bag from corner shops and eat clams by the kilo — the beach promenade is the city's living room.",
+    mistake:
+      "Only visiting the Zhanqiao pier — the old town's hilly German lanes and the beaches further east are the better wander.",
+    pair: "High-speed rail down from Beijing (~3.5h) or pair with Tai'an / Mount Tai.",
+    keywords: ["青岛 攻略", "青岛 啤酒街", "青岛 海鲜 八大关"],
+    experiences: [
+      "Walk the Zhanqiao pier and the old German town",
+      "Beach time at No.1 Bathing Beach and Badaguan villas",
+      "Fresh beer and clams in the evening beer street",
+    ],
+    seasonLong:
+      "Best late spring to autumn (May–Oct) for the beaches and sea air; the August International Beer Festival is the peak. Winters are cold and windy by the sea.",
+    todo: {
+      see: [
+        "Zhanqiao Pier & Little Qingdao Isle",
+        "Badaguan (八大关) villa district",
+        "Old town's red-roofed German streets & St Michael's Cathedral",
+      ],
+      experience: [
+        "Swim or stroll No.1 Bathing Beach",
+        "Tsingtao Beer Museum on the original brewery street",
+        "Sunset along the coastal boardwalk to May Fourth Square",
+      ],
+      eat: [
+        "Fresh draught Tsingtao 'beer by the bag'",
+        "Clams, oysters and grilled squid (海鲜)",
+        "Shandong-style dumplings and seafood noodles",
+      ],
+    },
+    show: [
+      { en: "Zhanqiao Pier", cn: "栈桥" },
+      { en: "Badaguan", cn: "八大关" },
+      { en: "Beer Street", cn: "啤酒街" },
+      { en: "Beach", cn: "海水浴场" },
+      { en: "Fresh seafood", cn: "海鲜" },
+    ],
+    facts: {
+      rail: "High-speed rail to Beijing (~3.5h), Jinan and Shanghai",
+      metro: "Yes — metro links the airport, old town and beaches",
+      flights: "Jiaodong International (TAO) — domestic plus regional Asia routes",
+      english: "Limited beyond hotels and big sights",
+      prices:
+        "Casual meal 25–45 yuan · seafood dinner 80–160 yuan per person · mid-range hotel 350–700 yuan (peak in summer)",
+      climate: "Summer 24 to 30°C sea breeze · winter −3 to 5°C and windy",
+    },
+    tips: [
+      "Buy fresh draught beer 'in a bag' from a corner shop and drink it on the promenade — that's the local move.",
+      "The old town is hilly and cobbled — comfortable shoes beat fashion here.",
+      "Seafood markets near the beaches will cook what you buy for a small fee; agree the price first.",
+    ],
+    photo: commonsFile("Zhanqiao pier with Little Qingdao Isle.jpg"),
+    credit: "Photo: Wikimedia Commons · CC BY-SA",
+  },
+  {
+    id: "dalian",
+    name: "Dalian",
+    cn: "大连",
+    region: "Northeast China (Liaoning coast)",
+    lng: 121.6147,
+    lat: 38.914,
+    tags: ["Coast", "Relaxed", "Squares & trams"],
+    stay: "2 days",
+    bestFor: "Coastal city break",
+    season: "May–Oct",
+    hub: "Good",
+    confidence: "Likely",
+    summary:
+      "A clean, green port city of big open squares, old trams and a winding coastal drive. Mild summers make it a popular northern seaside escape.",
+    why: "Locals come for the sea air and the coastal road — Xinghai Square and the Binhai boardwalk are the weekend ritual.",
+    mistake:
+      "Treating it as a checklist city — Dalian rewards a slow coastal walk and a tram ride more than a sight-by-sight rush.",
+    pair: "A short flight or ferry from Yantai across the bay, or rail/flight from Beijing.",
+    keywords: ["大连 攻略", "大连 滨海路", "星海广场"],
+    experiences: [
+      "Walk the Binhai coastal road and boardwalk",
+      "Xinghai Square — one of Asia's largest city squares",
+      "Ride a vintage tram through the old town",
+    ],
+    seasonLong:
+      "Best May–October for mild sea air and the coast; summer here is a cool escape from China's inland heat. Winters are cold and windy.",
+    todo: {
+      see: [
+        "Xinghai Square & the coastal boardwalk",
+        "Binhai Road (滨海路) clifftop coastal walk",
+        "Russian & Japanese heritage streets",
+      ],
+      experience: [
+        "Ride a vintage tram across the city",
+        "Tiger Beach & the seaside parks",
+        "Fishing-port seafood in the evening",
+      ],
+      eat: [
+        "Fresh sea urchin, abalone and shellfish",
+        "Northeastern stewed dishes (东北菜)",
+        "Seafood dumplings",
+      ],
+    },
+    show: [
+      { en: "Xinghai Square", cn: "星海广场" },
+      { en: "Binhai Road", cn: "滨海路" },
+      { en: "Tram", cn: "有轨电车" },
+      { en: "Seafood", cn: "海鲜" },
+      { en: "Beach", cn: "海滩" },
+    ],
+    facts: {
+      rail: "High-speed rail along the Liaoning corridor; flights to Beijing ~1.5h",
+      metro: "Yes — metro plus the historic tram lines",
+      flights: "Zhoushuizi International (DLC) — domestic plus Korea/Japan routes",
+      english: "Limited beyond hotels",
+      prices:
+        "Casual meal 25–45 yuan · seafood dinner 90–160 yuan per person · mid-range hotel 300–650 yuan",
+      climate: "Summer 22 to 28°C · winter −5 to 3°C and windy by the sea",
+    },
+    tips: [
+      "The Binhai coastal road is long and scenic — do one photogenic stretch on foot rather than the whole thing.",
+      "Summer weekends and holidays are busy with domestic beach crowds; midweek is calmer.",
+    ],
+    photo: commonsFile("Dalian China Xinghai-Square-01.jpg"),
+    credit: "Photo: Wikimedia Commons · CC BY-SA",
+  },
+  {
+    id: "yantai",
+    name: "Yantai",
+    cn: "烟台",
+    region: "Shandong (North China coast)",
+    lng: 121.3914,
+    lat: 37.5393,
+    tags: ["Coast", "Wine", "Penglai legend"],
+    stay: "1–2 days",
+    bestFor: "Coast & mirages",
+    season: "May–Oct",
+    hub: "Limited",
+    confidence: "Likely",
+    summary:
+      "A laid-back Shandong coast town known for the mythic Penglai Pavilion — the 'fairyland' of Chinese legend — plus China's oldest winery and quiet beaches.",
+    why: "Penglai is woven into Chinese mythology as the home of the immortals; locals still half-hope to catch the rare sea mirage off the headland.",
+    mistake:
+      "Expecting a big-city itinerary — Yantai is a slow coastal pairing with Qingdao, not a stand-alone week.",
+    pair: "Easiest paired with Qingdao (rail ~1h) along the Shandong coast.",
+    keywords: ["烟台 攻略", "蓬莱阁", "张裕酒庄"],
+    experiences: [
+      "Visit the Penglai Pavilion headland complex",
+      "Walk Yantai Hill and the old consulate quarter",
+      "Taste at the Changyu (Zhangyu) wine estate",
+    ],
+    seasonLong:
+      "Best May–October for the coast and clear sea views; summer is mild. Winters are cold, grey and windy.",
+    todo: {
+      see: [
+        "Penglai Pavilion (蓬莱阁) clifftop complex",
+        "Yantai Hill (烟台山) & old consulate buildings",
+        "The seaside promenade and beaches",
+      ],
+      experience: [
+        "Changyu wine estate tasting",
+        "Coastal seafood markets",
+        "Ferry views across the bay toward Dalian",
+      ],
+      eat: [
+        "Shandong fresh seafood",
+        "Braised sea cucumber (a local specialty)",
+        "Changyu wine & brandy",
+      ],
+    },
+    show: [
+      { en: "Penglai Pavilion", cn: "蓬莱阁" },
+      { en: "Yantai Hill", cn: "烟台山" },
+      { en: "Wine estate", cn: "张裕酒庄" },
+      { en: "Seafood", cn: "海鲜" },
+      { en: "Beach", cn: "海滩" },
+    ],
+    facts: {
+      rail: "High-speed rail to Qingdao (~1h) and along the Shandong coast",
+      metro: "No metro yet — buses, taxis and DiDi",
+      flights: "Penglai International (YNT) — mostly domestic routes",
+      english: "Very limited — bring a translate app",
+      prices:
+        "Casual meal 20–40 yuan · seafood dinner 70–140 yuan per person · mid-range hotel 250–550 yuan",
+      climate: "Summer 22 to 28°C · winter −3 to 4°C and windy",
+    },
+    tips: [
+      "Pair Yantai with Qingdao rather than visiting alone — they're a natural Shandong-coast two-step.",
+      "Penglai is about 1h from central Yantai; the sea mirage is famously rare, so come for the headland and legend, not a guaranteed spectacle.",
+    ],
+    photo: commonsFile("Penglai Pavilion viewed from the southeast.jpg"),
+    credit: "Photo: Wikimedia Commons · CC BY-SA",
   },
 ];
 
